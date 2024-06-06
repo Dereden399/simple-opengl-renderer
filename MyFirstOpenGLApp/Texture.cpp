@@ -17,8 +17,7 @@ Texture::Texture(std::string path, std::string name, GLint internalformat, GLenu
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, tWrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magMode);
-    
-    stbi_set_flip_vertically_on_load(flip); 
+    stbi_set_flip_vertically_on_load(flip);
     unsigned char *data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {

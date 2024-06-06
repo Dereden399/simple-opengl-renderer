@@ -18,6 +18,7 @@
 		92C628782C027EF900C3CA16 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92C628772C027EF900C3CA16 /* OpenGL.framework */; };
 		92C6287C2C027FD200C3CA16 /* libglfw.3.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 92C6287B2C027FD200C3CA16 /* libglfw.3.4.dylib */; };
 		92C6287E2C02861E00C3CA16 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 92C6287D2C02861E00C3CA16 /* glad.c */; };
+		92EC0BC02C120024001A3637 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BBE2C120024001A3637 /* Object.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -63,6 +64,9 @@
 		92C628792C027FAD00C3CA16 /* libGLEW.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.2.0.dylib; path = ../../../../../../opt/homebrew/Cellar/glew/2.2.0_1/lib/libGLEW.2.2.0.dylib; sourceTree = "<group>"; };
 		92C6287B2C027FD200C3CA16 /* libglfw.3.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.4.dylib; path = ../../../../../../opt/homebrew/Cellar/glfw/3.4/lib/libglfw.3.4.dylib; sourceTree = "<group>"; };
 		92C6287D2C02861E00C3CA16 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
+		92EC0BBE2C120024001A3637 /* Object.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
+		92EC0BBF2C120024001A3637 /* Object.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Object.hpp; sourceTree = "<group>"; };
+		92EC0BC32C122C06001A3637 /* Vertex.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Vertex.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +120,7 @@
 		92C6286E2C0278FE00C3CA16 /* MyFirstOpenGLApp */ = {
 			isa = PBXGroup;
 			children = (
+				92EC0BBD2C120016001A3637 /* Objects */,
 				9236E5152C10DCCD00423CAD /* Assets */,
 				9236E50E2C10A2C400423CAD /* Shaders */,
 				92C6287D2C02861E00C3CA16 /* glad.c */,
@@ -125,6 +130,7 @@
 				9236E5132C10DC4500423CAD /* stb_image.cpp */,
 				9236E5192C10E5AD00423CAD /* Texture.cpp */,
 				9236E51A2C10E5AD00423CAD /* Texture.hpp */,
+				92EC0BC32C122C06001A3637 /* Vertex.hpp */,
 			);
 			path = MyFirstOpenGLApp;
 			sourceTree = "<group>";
@@ -137,6 +143,15 @@
 				92C628772C027EF900C3CA16 /* OpenGL.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		92EC0BBD2C120016001A3637 /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				92EC0BBE2C120024001A3637 /* Object.cpp */,
+				92EC0BBF2C120024001A3637 /* Object.hpp */,
+			);
+			path = Objects;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,6 +214,7 @@
 			files = (
 				9236E51B2C10E5AD00423CAD /* Texture.cpp in Sources */,
 				92C628702C0278FE00C3CA16 /* main.cpp in Sources */,
+				92EC0BC02C120024001A3637 /* Object.cpp in Sources */,
 				9236E5142C10DC4500423CAD /* stb_image.cpp in Sources */,
 				9236E5072C0FA68000423CAD /* Shader.cpp in Sources */,
 				92C6287E2C02861E00C3CA16 /* glad.c in Sources */,
