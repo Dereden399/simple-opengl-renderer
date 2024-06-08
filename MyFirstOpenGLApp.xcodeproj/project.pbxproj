@@ -21,6 +21,7 @@
 		92EC0BC02C120024001A3637 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BBE2C120024001A3637 /* Object.cpp */; };
 		92EC0BC72C138AA7001A3637 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BC52C138AA7001A3637 /* Renderer.cpp */; };
 		92EC0BCD2C139EA9001A3637 /* Movable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BCB2C139EA9001A3637 /* Movable.cpp */; };
+		92EC0BD02C146499001A3637 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BCE2C146499001A3637 /* Camera.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -74,6 +75,8 @@
 		92EC0BC92C139949001A3637 /* Mesh.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Mesh.hpp; sourceTree = "<group>"; };
 		92EC0BCB2C139EA9001A3637 /* Movable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Movable.cpp; sourceTree = "<group>"; };
 		92EC0BCC2C139EA9001A3637 /* Movable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Movable.hpp; sourceTree = "<group>"; };
+		92EC0BCE2C146499001A3637 /* Camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
+		92EC0BCF2C146499001A3637 /* Camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +142,8 @@
 				9236E51A2C10E5AD00423CAD /* Texture.hpp */,
 				92EC0BC52C138AA7001A3637 /* Renderer.cpp */,
 				92EC0BC62C138AA7001A3637 /* Renderer.hpp */,
+				92EC0BCE2C146499001A3637 /* Camera.cpp */,
+				92EC0BCF2C146499001A3637 /* Camera.hpp */,
 			);
 			path = MyFirstOpenGLApp;
 			sourceTree = "<group>";
@@ -228,6 +233,7 @@
 				92C628702C0278FE00C3CA16 /* main.cpp in Sources */,
 				92EC0BCD2C139EA9001A3637 /* Movable.cpp in Sources */,
 				92EC0BC02C120024001A3637 /* Object.cpp in Sources */,
+				92EC0BD02C146499001A3637 /* Camera.cpp in Sources */,
 				9236E5142C10DC4500423CAD /* stb_image.cpp in Sources */,
 				92EC0BC72C138AA7001A3637 /* Renderer.cpp in Sources */,
 				9236E5072C0FA68000423CAD /* Shader.cpp in Sources */,

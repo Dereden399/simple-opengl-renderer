@@ -19,7 +19,7 @@ public:
     Movable() : pos(glm::vec3(0.0f)), rotation(glm::vec3(0.0f)), scale(glm::vec3(1.0f)) {};
     Movable(glm::vec3 pos_) : pos(pos_), rotation(glm::vec3(0.0f)), scale(glm::vec3(1.0f)) {};
     
-    glm::mat4 getModelMatrix();
+    glm::mat4 virtual getModelMatrix();
 };
 
 #endif /* Movable_hpp */
