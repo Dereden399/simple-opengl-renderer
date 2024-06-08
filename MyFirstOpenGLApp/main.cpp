@@ -18,6 +18,7 @@
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include "Objects/Object.hpp"
+#include "Renderer.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -59,8 +60,8 @@ int main()
     glEnable(GL_DEPTH_TEST);
     
     Shader shaders = Shader("./Shaders/vertexShader.glsl", "./Shaders/fragmentShader.glsl");
-    Texture boxTexture = Texture("Assets/container.jpg", "texture0", GL_RGB, GL_RGB, false, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_TEXTURE0);
-    Texture faceTexture = Texture("Assets/awesomeface.png", "texture1", GL_RGB, GL_RGBA, true, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_TEXTURE1);
+    Texture boxTexture = Texture("Assets/container.jpg", "boxTexture", GL_RGB, GL_RGB, false, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_TEXTURE0);
+    Texture faceTexture = Texture("Assets/awesomeface.png", "faceTexture", GL_RGB, GL_RGBA, true, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_TEXTURE0);
     glm::mat4 view = glm::mat4(1.0f);
     // note that we're translating the scene in the reverse direction of where we want to move
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
@@ -69,83 +70,39 @@ int main()
     projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
     
     auto projectionView = projection*view;
+    
+    CubeMesh cubeMesh = CubeMesh();
+    
     std::vector<Object> objects;
-    objects.emplace_back(
-                         std::vector<Vertex>{
-                             // Back face
-                             Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 0.0f),
-                             Vertex( 0.5f, -0.5f, -0.5f, 1.0f, 0.0f),
-                             Vertex( 0.5f,  0.5f, -0.5f, 1.0f, 1.0f),
-                             Vertex(-0.5f,  0.5f, -0.5f, 0.0f, 1.0f),
-                             
-                             // Front face
-                             Vertex(-0.5f, -0.5f,  0.5f, 0.0f, 0.0f),
-                             Vertex( 0.5f, -0.5f,  0.5f, 1.0f, 0.0f),
-                             Vertex( 0.5f,  0.5f,  0.5f, 1.0f, 1.0f),
-                             Vertex(-0.5f,  0.5f,  0.5f, 0.0f, 1.0f),
-                             
-                             // Left face
-                             Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 0.0f),
-                             Vertex(-0.5f,  0.5f, -0.5f, 1.0f, 0.0f),
-                             Vertex(-0.5f,  0.5f,  0.5f, 1.0f, 1.0f),
-                             Vertex(-0.5f, -0.5f,  0.5f, 0.0f, 1.0f),
-                             
-                             // Right face
-                             Vertex( 0.5f, -0.5f, -0.5f, 0.0f, 0.0f),
-                             Vertex( 0.5f,  0.5f, -0.5f, 1.0f, 0.0f),
-                             Vertex( 0.5f,  0.5f,  0.5f, 1.0f, 1.0f),
-                             Vertex( 0.5f, -0.5f,  0.5f, 0.0f, 1.0f),
-                             
-                             // Bottom face
-                             Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 0.0f),
-                             Vertex( 0.5f, -0.5f, -0.5f, 1.0f, 0.0f),
-                             Vertex( 0.5f, -0.5f,  0.5f, 1.0f, 1.0f),
-                             Vertex(-0.5f, -0.5f,  0.5f, 0.0f, 1.0f),
-                             
-                             // Top face
-                             Vertex(-0.5f,  0.5f, -0.5f, 0.0f, 0.0f),
-                             Vertex( 0.5f,  0.5f, -0.5f, 1.0f, 0.0f),
-                             Vertex( 0.5f,  0.5f,  0.5f, 1.0f, 1.0f),
-                             Vertex(-0.5f,  0.5f,  0.5f, 0.0f, 1.0f)
-                         },
-                         std::vector<unsigned int>{
-                             // Back face
-                             0, 1, 2, 2, 3, 0,
-                             // Front face
-                             4, 5, 6, 6, 7, 4,
-                             // Left face
-                             8, 9, 10, 10, 11, 8,
-                             // Right face
-                             12, 13, 14, 14, 15, 12,
-                             // Bottom face
-                             16, 17, 18, 18, 19, 16,
-                             // Top face
-                             20, 21, 22, 22, 23, 20}
-                         );
+    objects.push_back(Object(&cubeMesh, &boxTexture));
+    objects.push_back(Object(&cubeMesh, &faceTexture, glm::vec3(1.5f, 1.5f, 0.0f)));
+    objects[0].color = glm::vec3(1.0f,1.0f, 0.0f);
+    objects[0].textureMix = 0.9f;
+    
+    Renderer renderer = Renderer(shaders);
+    renderer.addStaticMesh(&cubeMesh);
+    renderer.initialise();
     
     shaders.use();
     shaders.setUniform("texture0", {0});
-    unsigned int projectionViewLoc = glGetUniformLocation(shaders.ID, "projectionView");
-    glUniformMatrix4fv(projectionViewLoc, 1, GL_FALSE, glm::value_ptr(projectionView));
+    shaders.setUniform("projectionView", projectionView);
     
+    float deltaTime = 0.0f;
+    float lastFrame = glfwGetTime();
     // render loop
     while(!glfwWindowShouldClose(window)) {
+        float curFrame = glfwGetTime();
+        deltaTime = curFrame - lastFrame;
+        lastFrame = curFrame;
         processInput(window);
         
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        boxTexture.bind();
-        //faceTexture.bind();
-        shaders.use();
+        objects[0].rotation.x += deltaTime*30;
+        objects[0].rotation.y += deltaTime*30;
+        objects[0].pos.y = sin(curFrame)/4;
         
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
-        unsigned int modelLoc = glGetUniformLocation(shaders.ID, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        
-        for (auto& obj : objects) {
-            obj.draw();
-        }
+        renderer.drawObjects(objects);
         
         glfwSwapBuffers(window);
         glfwPollEvents();

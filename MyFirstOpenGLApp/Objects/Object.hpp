@@ -12,28 +12,27 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "Vertex.hpp"
+#include "../Texture.hpp"
+#include "Mesh.hpp"
+#include "Movable.hpp"
 
-class Object {
-protected:
-    unsigned int _VAO, _VBO, _EBO;
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
+class Object : public Movable {
 public:
-    glm::vec3 pos;
-    Object(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
-    Object(const Object& obj);
-    Object& operator=(const Object& obj);
-    Object(Object&& obj);
-    Object& operator=(Object&& obj);
-    ~Object() {
-        glDeleteVertexArrays(1, &_VAO);
-        glDeleteBuffers(1, &_VBO);
-        glDeleteBuffers(1, &_EBO);
-    };
+    Mesh* mesh;
+    Texture* texture;
+    glm::vec3 color;
+    float textureMix;
     
-    void draw();
-private:
-    void initialize();
+    Object(Mesh* m_ = NULL, Texture* t_ = NULL, glm::vec3 p_ = glm::vec3(0.0f)) : Movable(p_) {
+        mesh = m_;
+        texture = t_;
+        color = glm::vec3(0.0f);
+        textureMix = t_ != NULL ? 1.0f : 0.0f;
+    };
+    Object(Mesh* mesh_, glm::vec3 pos_) : Movable(pos_), mesh(mesh_) {texture = NULL;};
+    
+    void setMesh(Mesh* mesh_);
+    void setTexture(Texture* text) {texture = text;};
 };
 
 #endif /* Object_hpp */
