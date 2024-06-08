@@ -64,8 +64,9 @@ int main()
     std::vector<Object> objects;
     objects.push_back(Object(&cubeMesh, &boxTexture));
     objects.push_back(Object(&cubeMesh, &faceTexture, glm::vec3(1.5f, 1.5f, 0.0f)));
+    objects.push_back(Object(&cubeMesh, &boxTexture, glm::vec3(-1.5f,0.0f,0.0f)));
     objects[0].color = glm::vec3(1.0f,1.0f, 0.0f);
-    objects[0].textureMix = 0.9f;
+    objects[0].textureMix = 0.5f;
     
     Renderer renderer = Renderer(shaders);
     renderer.addStaticMesh(&cubeMesh);
@@ -85,6 +86,7 @@ int main()
         
         auto projectionView = camera.getProjectionMatrix();
         shaders.setUniform("projectionView", projectionView);
+        shaders.setUniform("viewerPos", {camera.pos.x, camera.pos.y, camera.pos.z});
         
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -108,24 +110,25 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void processInput(GLFWwindow *window, float delta)
 {
+    auto cameraBasis = camera.getCameraBasis();
     glm::vec3 mov = glm::vec3(0.0f);
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        mov.z = -1;
+        mov += glm::vec3(cameraBasis[0]);
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        mov.z = 1;
+        mov -= glm::vec3(cameraBasis[0]);
     
     if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        mov.x = -1;
+        mov -= glm::vec3(cameraBasis[1]);
     else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        mov.x = 1;
+        mov += glm::vec3(cameraBasis[1]);
     
     if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        mov.y = -1;
+        mov += glm::vec3(cameraBasis[2]);
     else if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        mov.y = 1;
+        mov -= glm::vec3(cameraBasis[2]);
     
     if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         camera.rotation.y -= delta*30.0f;

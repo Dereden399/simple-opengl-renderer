@@ -4,12 +4,17 @@ layout (location = 1) in vec2 aTexCoord;
 layout (location = 2) in vec3 aNorm;
 
 out vec2 TexCoord;
+out vec3 Normal;
+out vec3 FragPos;
 
 uniform mat4 projectionView;
 uniform mat4 model;
+uniform mat4 normalsModel;
 
 void main()
 {
     gl_Position = projectionView * model * vec4(aPos, 1.0);
     TexCoord = aTexCoord;
+    FragPos = vec3(model*vec4(aPos,1.0));
+    Normal = (normalsModel*vec4(aNorm, 1.0)).xyz;
 }

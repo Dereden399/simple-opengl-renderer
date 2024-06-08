@@ -35,40 +35,40 @@ private:
     std::vector<Vertex> getCubeVertices() {
         return std::vector<Vertex>{
             // Back face
-            Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 0.0f),
-            Vertex( 0.5f, -0.5f, -0.5f, 1.0f, 0.0f),
-            Vertex( 0.5f,  0.5f, -0.5f, 1.0f, 1.0f),
-            Vertex(-0.5f,  0.5f, -0.5f, 0.0f, 1.0f),
-            
+            Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f),
+            Vertex( 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,  0.0f, 0.0f, -1.0f),
+            Vertex( 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,  0.0f, 0.0f, -1.0f),
+            Vertex(-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,  0.0f, 0.0f, -1.0f),
+
             // Front face
-            Vertex(-0.5f, -0.5f,  0.5f, 0.0f, 0.0f),
-            Vertex( 0.5f, -0.5f,  0.5f, 1.0f, 0.0f),
-            Vertex( 0.5f,  0.5f,  0.5f, 1.0f, 1.0f),
-            Vertex(-0.5f,  0.5f,  0.5f, 0.0f, 1.0f),
-            
+            Vertex(-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f),
+            Vertex( 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,  0.0f, 0.0f, 1.0f),
+            Vertex( 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f),
+            Vertex(-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f),
+
             // Left face
-            Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 0.0f),
-            Vertex(-0.5f,  0.5f, -0.5f, 1.0f, 0.0f),
-            Vertex(-0.5f,  0.5f,  0.5f, 1.0f, 1.0f),
-            Vertex(-0.5f, -0.5f,  0.5f, 0.0f, 1.0f),
-            
+            Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f),
+            Vertex(-0.5f,  0.5f, -0.5f, 1.0f, 0.0f,  -1.0f, 0.0f, 0.0f),
+            Vertex(-0.5f,  0.5f,  0.5f, 1.0f, 1.0f,  -1.0f, 0.0f, 0.0f),
+            Vertex(-0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  -1.0f, 0.0f, 0.0f),
+
             // Right face
-            Vertex( 0.5f, -0.5f, -0.5f, 0.0f, 0.0f),
-            Vertex( 0.5f,  0.5f, -0.5f, 1.0f, 0.0f),
-            Vertex( 0.5f,  0.5f,  0.5f, 1.0f, 1.0f),
-            Vertex( 0.5f, -0.5f,  0.5f, 0.0f, 1.0f),
-            
+            Vertex( 0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f),
+            Vertex( 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,  1.0f, 0.0f, 0.0f),
+            Vertex( 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f),
+            Vertex( 0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f),
+
             // Bottom face
-            Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 0.0f),
-            Vertex( 0.5f, -0.5f, -0.5f, 1.0f, 0.0f),
-            Vertex( 0.5f, -0.5f,  0.5f, 1.0f, 1.0f),
-            Vertex(-0.5f, -0.5f,  0.5f, 0.0f, 1.0f),
-            
+            Vertex(-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,  0.0f, -1.0f, 0.0f),
+            Vertex( 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,  0.0f, -1.0f, 0.0f),
+            Vertex( 0.5f, -0.5f,  0.5f, 1.0f, 1.0f,  0.0f, -1.0f, 0.0f),
+            Vertex(-0.5f, -0.5f,  0.5f, 0.0f, 1.0f,  0.0f, -1.0f, 0.0f),
+
             // Top face
-            Vertex(-0.5f,  0.5f, -0.5f, 0.0f, 0.0f),
-            Vertex( 0.5f,  0.5f, -0.5f, 1.0f, 0.0f),
-            Vertex( 0.5f,  0.5f,  0.5f, 1.0f, 1.0f),
-            Vertex(-0.5f,  0.5f,  0.5f, 0.0f, 1.0f)
+            Vertex(-0.5f,  0.5f, -0.5f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f),
+            Vertex( 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f),
+            Vertex( 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,  0.0f, 1.0f, 0.0f),
+            Vertex(-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f)
         };
     };
     std::vector<unsigned int> getCubeIndices() {

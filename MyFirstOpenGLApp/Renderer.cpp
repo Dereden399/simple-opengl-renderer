@@ -75,6 +75,8 @@ void Renderer::drawObjects(std::vector<Object> &objects) {
     for (auto& obj : objects) {
         auto model = obj.getModelMatrix();
         shader.setUniform("model", model);
+        auto normalsModel = glm::transpose(glm::inverse(model));
+        shader.setUniform("normalsModel", normalsModel);
         shader.setUniform("aColor", {obj.color.x, obj.color.y, obj.color.z});
         shader.setUniform("textureMix", {obj.textureMix});
         if (obj.texture != NULL) {
