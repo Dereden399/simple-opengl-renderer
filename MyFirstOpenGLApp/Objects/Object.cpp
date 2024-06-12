@@ -7,14 +7,11 @@
 
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "Object.hpp"
 
-void Object::setMesh(Mesh* mesh_) {
-    if (mesh != NULL) {
-        std::cout << "ERROR::REASSIGNING::MESH" << std::endl;
-        return;
-    }
-    mesh = mesh_;
+glm::mat4 Object::getModelMatrix() {
+    glm::mat4 result = glm::scale(glm::mat4(1.0f), this->scale);
+    result = glm::translate(result, this->pos);
+    return result*getRotationMatrix();
 };

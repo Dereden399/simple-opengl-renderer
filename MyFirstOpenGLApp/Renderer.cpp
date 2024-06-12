@@ -9,16 +9,19 @@
 #include <iostream>
 #include "Renderer.hpp"
 
-Renderer::Renderer(Shader& shader_) : shader(shader_) {
+Renderer::Renderer() {
     _initialised = false;
     _meshes = std::vector<Mesh*>();
 };
 
 Renderer::~Renderer() {
-    glDeleteVertexArrays(1, &_VAO);
-    glDeleteBuffers(1, &_VBO);
-    glDeleteBuffers(1, &_EBO);
+    if (_initialised) {
+        glDeleteVertexArrays(1, &_VAO);
+        glDeleteBuffers(1, &_VBO);
+        glDeleteBuffers(1, &_EBO);
+    }
 };
+
 
 void Renderer::initialise() {
     std::vector<Vertex> finalVertices;
@@ -60,6 +63,10 @@ void Renderer::initialise() {
 };
 
 void Renderer::addStaticMesh(Mesh *mesh) {
+    if (_initialised) {
+        std::cout << "ERROR::RENDERER: Can't add static mesh after initialization" << std::endl;
+        return;
+    }
     auto wasAdded = std::find_if(_meshes.begin(), _meshes.end(), [&mesh](Mesh* m_) {
         return m_ == mesh;
     });
@@ -70,18 +77,38 @@ void Renderer::addStaticMesh(Mesh *mesh) {
     _meshes.push_back(mesh);
 };
 
-void Renderer::drawObjects(std::vector<Object> &objects) {
+void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera, DirectionalLight* dirLight = nullptr) {
     glBindVertexArray(_VAO);
+    shader->use();
+    auto projViewMatrix = camera->getProjectionViewMatrix();
+    shader->setUniform("projectionView", projViewMatrix);
+    shader->setUniform("viewerPos", {camera->pos.x, camera->pos.y, camera->pos.z});
+    shader->setUniform("hasDirLight", {dirLight != nullptr ? 1.0f : 0.0f});
+    if (dirLight != nullptr) {
+        shader->setUniform("dirLight.lightColor", {dirLight->lightColor.x, dirLight->lightColor.y, dirLight->lightColor.z});
+        shader->setUniform("dirLight.direction", {dirLight->direction.x, dirLight->direction.y, dirLight->direction.z});
+        shader->setUniform("dirLight.intensity", {dirLight->intensity});
+    }
     for (auto& obj : objects) {
-        auto model = obj.getModelMatrix();
-        shader.setUniform("model", model);
+        auto model = obj->getModelMatrix();
+        shader->setUniform("model", model);
         auto normalsModel = glm::transpose(glm::inverse(model));
-        shader.setUniform("normalsModel", normalsModel);
-        shader.setUniform("aColor", {obj.color.x, obj.color.y, obj.color.z});
-        shader.setUniform("textureMix", {obj.textureMix});
-        if (obj.texture != NULL) {
-            obj.texture->bind();
+        shader->setUniform("normalsModel", normalsModel);
+        const auto& material = obj->material;
+        if (material->diffuseMap != nullptr) {
+            material->diffuseMap->bind(GL_TEXTURE0);
+            shader->setUniform("diffuseMap", {0});
         }
-        glDrawElements(GL_TRIANGLES, obj.mesh->size, GL_UNSIGNED_INT, (void*)(size_t)(obj.mesh->globalStartIndex));
+        shader->setUniform("useDiffuseMap", {material->diffuseMap != nullptr});
+        if (material->specularMap != nullptr) {
+            material->specularMap->bind(GL_TEXTURE1);
+            shader->setUniform("specularMap", {1});
+        }
+        shader->setUniform("useSpecularMap", {material->specularMap != nullptr});
+        shader->setUniform("diffuseColor", {material->diffuseColor.x, material->diffuseColor.y, material->diffuseColor.z});
+        shader->setUniform("specularColor", {material->specularColor.x, material->specularColor.y, material->specularColor.z});
+        shader->setUniform("shininess", {material->shininess});
+        
+        glDrawElements(GL_TRIANGLES, obj->mesh->size, GL_UNSIGNED_INT, (void*)(size_t)(obj->mesh->globalStartIndex));
     }
 };

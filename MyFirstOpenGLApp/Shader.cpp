@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include <initializer_list>
+#include <vector>
 #include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
@@ -97,21 +98,23 @@ void Shader::use() {
 }
 
 void Shader::setUniform(const std::string &name, std::initializer_list<bool> values) const {
+    std::vector<int> intValues(values.size());
+    std::transform(values.begin(), values.end(), intValues.begin(), [](bool v) { return v ? 1 : 0; });
     switch (values.size()) {
         case 0:
             std::cout << "ERROR::SHADER::PROGRAM::SET_UNIFORM: zero arguments in function call" << std::endl;
             break;
         case 1:
-            glUniform1iv(glGetUniformLocation(ID, name.c_str()), 1, (const int *)values.begin());
+            glUniform1iv(glGetUniformLocation(ID, name.c_str()), 1, intValues.data());
             break;
         case 2:
-            glUniform2iv(glGetUniformLocation(ID, name.c_str()), 1, (const int *)values.begin());
+            glUniform2iv(glGetUniformLocation(ID, name.c_str()), 1, intValues.data());
             break;
         case 3:
-            glUniform3iv(glGetUniformLocation(ID, name.c_str()), 1, (const int *)values.begin());
+            glUniform3iv(glGetUniformLocation(ID, name.c_str()), 1, intValues.data());
             break;
         default:
-            glUniform4iv(glGetUniformLocation(ID, name.c_str()), 1, (const int *)values.begin());
+            glUniform4iv(glGetUniformLocation(ID, name.c_str()), 1, intValues.data());
     }
 }
 

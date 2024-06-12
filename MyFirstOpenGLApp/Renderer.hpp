@@ -14,25 +14,26 @@
 #include "Shader.hpp"
 #include "Objects/Mesh.hpp"
 #include "Objects/Object.hpp"
+#include "Camera.hpp"
+#include "Lights.hpp"
 
 class Renderer {
     unsigned int _VAO, _VBO, _EBO;
     bool _initialised;
     std::vector<Mesh*> _meshes;
 public:
-    Shader& shader;
-    
-    Renderer(Shader& shader_);
+    Renderer();
     ~Renderer();
-    // we don't want to copy/move our renderer (yet)
+    // we don't want to copy our renderer (yet)
     Renderer(const Renderer& r) = delete;
-    Renderer(const Renderer&& r) = delete;
     Renderer& operator=(const Renderer& r) = delete;
-    Renderer& operator=(const Renderer&& r) = delete;
+    
+    Renderer(Renderer&& r);
+    Renderer& operator=(Renderer&& r);
     
     void initialise();
     void addStaticMesh(Mesh* mesh);
-    void drawObjects(std::vector<Object>& objects);
+    void drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera, DirectionalLight* dirLights);
 };
 
 #endif /* Renderer_hpp */

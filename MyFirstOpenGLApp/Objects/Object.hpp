@@ -8,31 +8,23 @@
 #ifndef Object_hpp
 #define Object_hpp
 
-#include <glad/glad.h>
 #include <glm/glm.hpp>
-#include <vector>
-#include "Vertex.hpp"
-#include "../Texture.hpp"
-#include "Mesh.hpp"
-#include "Movable.hpp"
+#include <string>
 
-class Object : public Movable {
+#include "Mesh.hpp"
+#include "Utils.hpp"
+#include "Material.hpp"
+#include "../Shader.hpp"
+
+class Object : public Movable, public Rotatable, public Scalable {
 public:
+    Shader* shader;
     Mesh* mesh;
-    Texture* texture;
-    glm::vec3 color;
-    float textureMix;
+    Material* material;
     
-    Object(Mesh* m_ = NULL, Texture* t_ = NULL, glm::vec3 p_ = glm::vec3(0.0f)) : Movable(p_) {
-        mesh = m_;
-        texture = t_;
-        color = glm::vec3(0.0f);
-        textureMix = t_ != NULL ? 1.0f : 0.0f;
-    };
-    Object(Mesh* mesh_, glm::vec3 pos_) : Movable(pos_), mesh(mesh_) {texture = NULL;};
+    Object(Mesh* m_, glm::vec3 p_ = glm::vec3(0.0f)) : Movable(p_), Rotatable(), Scalable(), mesh(m_), shader(nullptr), material(nullptr) {};
     
-    void setMesh(Mesh* mesh_);
-    void setTexture(Texture* text) {texture = text;};
+    glm::mat4 getModelMatrix();
 };
 
 #endif /* Object_hpp */

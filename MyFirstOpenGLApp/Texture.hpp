@@ -19,11 +19,9 @@ public:
     
     int width, height, nrChannels;
     
-    GLenum unit;
+    Texture(std::string path, std::string name, GLint internalformat, GLenum format, bool flip, GLint sWrapMode, GLint tWrapMode, GLint magMode, GLint minMode);
     
-    Texture(std::string path, std::string name, GLint internalformat, GLenum format, bool flip, GLint sWrapMode, GLint tWrapMode, GLint magMode, GLint minMode, GLenum unit);
-    
-    void bind();
+    void bind(GLenum unit);
 };
 
 #endif /* Texture_hpp */

@@ -8,8 +8,7 @@
 #include "Texture.hpp"
 #include <iostream>
 
-Texture::Texture(std::string path, std::string name, GLint internalformat, GLenum format, bool flip, GLint sWrapMode, GLint tWrapMode, GLint magMode, GLint minMode, GLenum _unit) {
-    unit = _unit;
+Texture::Texture(std::string path, std::string name, GLint internalformat, GLenum format, bool flip, GLint sWrapMode, GLint tWrapMode, GLint magMode, GLint minMode) {
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
     // set the texture wrapping/filtering options (on the currently bound texture object)
@@ -31,7 +30,7 @@ Texture::Texture(std::string path, std::string name, GLint internalformat, GLenu
     stbi_image_free(data);
 }
 
-void Texture::bind() {
+void Texture::bind(GLenum unit) {
     glActiveTexture(unit);
     glBindTexture(GL_TEXTURE_2D, ID);
 }

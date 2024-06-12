@@ -10,7 +10,7 @@
 #include <vector>
 #include <string>
 
-#include "Vertex.hpp"
+#include "Utils.hpp"
 
 class Mesh {
 public:

@@ -20,127 +20,71 @@
 #include "Objects/Object.hpp"
 #include "Renderer.hpp"
 #include "Camera.hpp"
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-
-void processInput(GLFWwindow *window, float delta);
-
-Camera camera = Camera(glm::vec3(0.0f,0.0f,3.0f), glm::vec3(0.0f,1.0f,0.0f));
+#include "Program.hpp"
+#include "Objects/Material.hpp"
+#include "Lights.hpp"
 
 
 int main()
 {
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+    Program program = Program();
+    if (program.initialise() == -1) {
         return -1;
     }
     
-    
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    
-    glEnable(GL_DEPTH_TEST);
-    
-    Shader shaders = Shader("./Shaders/vertexShader.glsl", "./Shaders/fragmentShader.glsl");
-    Texture boxTexture = Texture("Assets/container.jpg", "boxTexture", GL_RGB, GL_RGB, false, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_TEXTURE0);
-    Texture faceTexture = Texture("Assets/awesomeface.png", "faceTexture", GL_RGB, GL_RGBA, true, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_TEXTURE0);
+    Texture boxTexture = Texture("Assets/container.jpg", "boxTexture", GL_RGB, GL_RGB, false, GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
     
     CubeMesh cubeMesh = CubeMesh();
     
-    std::vector<Object> objects;
-    objects.push_back(Object(&cubeMesh, &boxTexture));
-    objects.push_back(Object(&cubeMesh, &faceTexture, glm::vec3(1.5f, 1.5f, 0.0f)));
-    objects.push_back(Object(&cubeMesh, &boxTexture, glm::vec3(-1.5f,0.0f,0.0f)));
-    objects[0].color = glm::vec3(1.0f,1.0f, 0.0f);
-    objects[0].textureMix = 0.5f;
+    Shader uberShader = Shader("./Shaders/vertexShader.glsl", "./Shaders/fragmentShader.glsl");
+    Material boxCrateMaterial = Material("boxCrateMaterial", glm::vec3(1.0f), glm::vec3(1.0f), 64);
+    boxCrateMaterial.diffuseMap = &boxTexture;
     
-    Renderer renderer = Renderer(shaders);
-    renderer.addStaticMesh(&cubeMesh);
-    renderer.initialise();
+    Material untexturedMaterial = Material("untexturedMaterial", glm::vec3(1.0f,0.0f,1.0f), glm::vec3(0.0f,1.0f,1.0f), 64);
     
-    shaders.use();
-    shaders.setUniform("texture0", {0});
+    program.renderer.addStaticMesh(&cubeMesh);
+    program.renderer.initialise();
     
-    float deltaTime = 0.0f;
-    float lastFrame = glfwGetTime();
+    Object box = Object(&cubeMesh);
+    box.material = &boxCrateMaterial;
+    box.shader = &uberShader;
+    
+    Object cube = Object(&cubeMesh);
+    cube.material = &untexturedMaterial;
+    cube.shader = &uberShader;
+    
+    box.pos = glm::vec3(2.0f, 0.0f, 0.0f);
+    cube.pos = glm::vec3(0.0f, 0.0f, 0.0f);
+    
+    program.objects.push_back(&box);
+    program.objects.push_back(&cube);
+    
+    DirectionalLight light = DirectionalLight();
+    light.direction = glm::normalize(glm::vec3(0.0f, -0.5f, -1.0f));
+    light.intensity = 1.0f;
+    light.lightColor = glm::vec3(1.0f,1.0f,1.0f);
+    
+    program.dirLight = &light;
+    
+    Camera camera = Camera(glm::vec3(0.0f,0.0f,3.0f), glm::vec3(0.0f,1.0f,0.0f));
+    camera.pointAt(cube.pos);
+    program.selectedCamera = &camera;
+    
+    program.renderer.initialise();
+    
     // render loop
-    while(!glfwWindowShouldClose(window)) {
-        float curFrame = glfwGetTime();
-        deltaTime = curFrame - lastFrame;
-        lastFrame = curFrame;
-        processInput(window, deltaTime);
+    while(!program.shouldWindowClose()) {
+        auto [time, delta] = program.startRenderLoop();
         
-        auto projectionView = camera.getProjectionMatrix();
-        shaders.setUniform("projectionView", projectionView);
-        shaders.setUniform("viewerPos", {camera.pos.x, camera.pos.y, camera.pos.z});
+        box.rotation.x += delta*30;
+        box.rotation.y += delta*30;
+        box.pos.y = sin(time)/4;
+        light.lightColor.x = sin(time)/2+0.5;
         
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        objects[0].rotation.x += deltaTime*30;
-        objects[0].rotation.y += deltaTime*30;
-        objects[0].pos.y = sin(curFrame)/4;
+        program.render();
         
-        renderer.drawObjects(objects);
-        
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        program.endRenderLoop();
     }
     glfwTerminate();
     return 0;
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow *window, float delta)
-{
-    auto cameraBasis = camera.getCameraBasis();
-    glm::vec3 mov = glm::vec3(0.0f);
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    
-    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        mov += glm::vec3(cameraBasis[0]);
-    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        mov -= glm::vec3(cameraBasis[0]);
-    
-    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        mov -= glm::vec3(cameraBasis[1]);
-    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        mov += glm::vec3(cameraBasis[1]);
-    
-    if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        mov += glm::vec3(cameraBasis[2]);
-    else if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        mov -= glm::vec3(cameraBasis[2]);
-    
-    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        camera.rotation.y -= delta*30.0f;
-    else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        camera.rotation.y += delta*30.0f;
-    
-    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        camera.rotation.x += delta*30.0f;
-    else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        camera.rotation.x -= delta*30.0f;
-    
-    
-    if (mov != glm::vec3(0.0f))
-        camera.pos += glm::normalize(mov)*delta*2.0f;
 }

@@ -20,8 +20,10 @@
 		92C6287E2C02861E00C3CA16 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 92C6287D2C02861E00C3CA16 /* glad.c */; };
 		92EC0BC02C120024001A3637 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BBE2C120024001A3637 /* Object.cpp */; };
 		92EC0BC72C138AA7001A3637 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BC52C138AA7001A3637 /* Renderer.cpp */; };
-		92EC0BCD2C139EA9001A3637 /* Movable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BCB2C139EA9001A3637 /* Movable.cpp */; };
 		92EC0BD02C146499001A3637 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BCE2C146499001A3637 /* Camera.cpp */; };
+		92EC0BD72C159E8C001A3637 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BD52C159E8C001A3637 /* Utils.cpp */; };
+		92EC0BDA2C15B3CD001A3637 /* Program.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BD82C15B3CD001A3637 /* Program.cpp */; };
+		92EC0BE32C1A23A4001A3637 /* Lights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BE12C1A23A4001A3637 /* Lights.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -69,14 +71,18 @@
 		92C6287D2C02861E00C3CA16 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
 		92EC0BBE2C120024001A3637 /* Object.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
 		92EC0BBF2C120024001A3637 /* Object.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Object.hpp; sourceTree = "<group>"; };
-		92EC0BC32C122C06001A3637 /* Vertex.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Vertex.hpp; sourceTree = "<group>"; };
 		92EC0BC52C138AA7001A3637 /* Renderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		92EC0BC62C138AA7001A3637 /* Renderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Renderer.hpp; sourceTree = "<group>"; };
 		92EC0BC92C139949001A3637 /* Mesh.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Mesh.hpp; sourceTree = "<group>"; };
-		92EC0BCB2C139EA9001A3637 /* Movable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Movable.cpp; sourceTree = "<group>"; };
-		92EC0BCC2C139EA9001A3637 /* Movable.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Movable.hpp; sourceTree = "<group>"; };
 		92EC0BCE2C146499001A3637 /* Camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
 		92EC0BCF2C146499001A3637 /* Camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Camera.hpp; sourceTree = "<group>"; };
+		92EC0BD52C159E8C001A3637 /* Utils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
+		92EC0BD62C159E8C001A3637 /* Utils.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Utils.hpp; sourceTree = "<group>"; };
+		92EC0BD82C15B3CD001A3637 /* Program.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Program.cpp; sourceTree = "<group>"; };
+		92EC0BD92C15B3CD001A3637 /* Program.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Program.hpp; sourceTree = "<group>"; };
+		92EC0BDF2C19C9EA001A3637 /* Material.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Material.hpp; sourceTree = "<group>"; };
+		92EC0BE12C1A23A4001A3637 /* Lights.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lights.cpp; sourceTree = "<group>"; };
+		92EC0BE22C1A23A4001A3637 /* Lights.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Lights.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +150,10 @@
 				92EC0BC62C138AA7001A3637 /* Renderer.hpp */,
 				92EC0BCE2C146499001A3637 /* Camera.cpp */,
 				92EC0BCF2C146499001A3637 /* Camera.hpp */,
+				92EC0BD82C15B3CD001A3637 /* Program.cpp */,
+				92EC0BD92C15B3CD001A3637 /* Program.hpp */,
+				92EC0BE12C1A23A4001A3637 /* Lights.cpp */,
+				92EC0BE22C1A23A4001A3637 /* Lights.hpp */,
 			);
 			path = MyFirstOpenGLApp;
 			sourceTree = "<group>";
@@ -161,12 +171,12 @@
 		92EC0BBD2C120016001A3637 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
-				92EC0BC32C122C06001A3637 /* Vertex.hpp */,
 				92EC0BBE2C120024001A3637 /* Object.cpp */,
 				92EC0BBF2C120024001A3637 /* Object.hpp */,
 				92EC0BC92C139949001A3637 /* Mesh.hpp */,
-				92EC0BCB2C139EA9001A3637 /* Movable.cpp */,
-				92EC0BCC2C139EA9001A3637 /* Movable.hpp */,
+				92EC0BD52C159E8C001A3637 /* Utils.cpp */,
+				92EC0BD62C159E8C001A3637 /* Utils.hpp */,
+				92EC0BDF2C19C9EA001A3637 /* Material.hpp */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -229,15 +239,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92EC0BDA2C15B3CD001A3637 /* Program.cpp in Sources */,
 				9236E51B2C10E5AD00423CAD /* Texture.cpp in Sources */,
 				92C628702C0278FE00C3CA16 /* main.cpp in Sources */,
-				92EC0BCD2C139EA9001A3637 /* Movable.cpp in Sources */,
 				92EC0BC02C120024001A3637 /* Object.cpp in Sources */,
 				92EC0BD02C146499001A3637 /* Camera.cpp in Sources */,
 				9236E5142C10DC4500423CAD /* stb_image.cpp in Sources */,
 				92EC0BC72C138AA7001A3637 /* Renderer.cpp in Sources */,
 				9236E5072C0FA68000423CAD /* Shader.cpp in Sources */,
+				92EC0BD72C159E8C001A3637 /* Utils.cpp in Sources */,
 				92C6287E2C02861E00C3CA16 /* glad.c in Sources */,
+				92EC0BE32C1A23A4001A3637 /* Lights.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
