@@ -33,7 +33,7 @@ public:
     
     void initialise();
     void addStaticMesh(Mesh* mesh);
-    void drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera, DirectionalLight* dirLights);
+    void drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera, DirectionalLight* dirLights, std::vector<PointLight*> pointLights);
 };
 
 #endif /* Renderer_hpp */

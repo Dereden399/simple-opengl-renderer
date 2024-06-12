@@ -11,7 +11,7 @@
 #include "Object.hpp"
 
 glm::mat4 Object::getModelMatrix() {
-    glm::mat4 result = glm::scale(glm::mat4(1.0f), this->scale);
-    result = glm::translate(result, this->pos);
+    glm::mat4 result = glm::translate(glm::mat4(1.0f), this->pos);
+    result = glm::scale(result, this->scale);
     return result*getRotationMatrix();
 };

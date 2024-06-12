@@ -18,12 +18,11 @@ struct DirectionalLight {
 
 struct PointLight {
     glm::vec3 lightColor;
-    glm::vec3 direction;
-    glm::vec3 specularIntensity;
     glm::vec3 pos;
     float constant;
     float linear;
     float quadratic;
+    float intensity;
 };
 
 

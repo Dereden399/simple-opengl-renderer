@@ -77,13 +77,23 @@ void Renderer::addStaticMesh(Mesh *mesh) {
     _meshes.push_back(mesh);
 };
 
-void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera, DirectionalLight* dirLight = nullptr) {
+void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera, DirectionalLight* dirLight = nullptr, std::vector<PointLight*> pointLights = std::vector<PointLight*>()) {
     glBindVertexArray(_VAO);
     shader->use();
     auto projViewMatrix = camera->getProjectionViewMatrix();
     shader->setUniform("projectionView", projViewMatrix);
     shader->setUniform("viewerPos", {camera->pos.x, camera->pos.y, camera->pos.z});
     shader->setUniform("hasDirLight", {dirLight != nullptr ? 1.0f : 0.0f});
+    for (int i = 0; i < pointLights.size(); i++) {
+        const auto light = pointLights[i];
+        shader->setUniform(("pointLights[" + std::to_string(i) + "].lightColor"), {light->lightColor.x, light->lightColor.y, light->lightColor.z});
+        shader->setUniform(("pointLights[" + std::to_string(i) + "].pos"), {light->pos.x, light->pos.y, light->pos.z});
+        shader->setUniform(("pointLights[" + std::to_string(i) + "].intensity"), {light->intensity});
+        shader->setUniform(("pointLights[" + std::to_string(i) + "].constant"), {light->constant});
+        shader->setUniform(("pointLights[" + std::to_string(i) + "].linear"), {light->linear});
+        shader->setUniform(("pointLights[" + std::to_string(i) + "].quadratic"), {light->quadratic});
+    }
+    shader->setUniform("pointLightsCount", {(int)pointLights.size()});
     if (dirLight != nullptr) {
         shader->setUniform("dirLight.lightColor", {dirLight->lightColor.x, dirLight->lightColor.y, dirLight->lightColor.z});
         shader->setUniform("dirLight.direction", {dirLight->direction.x, dirLight->direction.y, dirLight->direction.z});

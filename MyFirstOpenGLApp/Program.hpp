@@ -22,6 +22,7 @@ public:
     Renderer renderer;
     std::vector<Object*> objects;
     DirectionalLight* dirLight;
+    std::vector<PointLight*> pointLights;
     
     Program();
     
