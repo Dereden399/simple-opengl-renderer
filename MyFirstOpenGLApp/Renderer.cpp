@@ -77,28 +77,63 @@ void Renderer::addStaticMesh(Mesh *mesh) {
     _meshes.push_back(mesh);
 };
 
-void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera, DirectionalLight* dirLight = nullptr, std::vector<PointLight*> pointLights = std::vector<PointLight*>()) {
+void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera, std::vector<Light*> lights = std::vector<Light*>()) {
     glBindVertexArray(_VAO);
     shader->use();
     auto projViewMatrix = camera->getProjectionViewMatrix();
     shader->setUniform("projectionView", projViewMatrix);
     shader->setUniform("viewerPos", {camera->pos.x, camera->pos.y, camera->pos.z});
-    shader->setUniform("hasDirLight", {dirLight != nullptr ? 1.0f : 0.0f});
-    for (int i = 0; i < pointLights.size(); i++) {
-        const auto light = pointLights[i];
-        shader->setUniform(("pointLights[" + std::to_string(i) + "].lightColor"), {light->lightColor.x, light->lightColor.y, light->lightColor.z});
-        shader->setUniform(("pointLights[" + std::to_string(i) + "].pos"), {light->pos.x, light->pos.y, light->pos.z});
-        shader->setUniform(("pointLights[" + std::to_string(i) + "].intensity"), {light->intensity});
-        shader->setUniform(("pointLights[" + std::to_string(i) + "].constant"), {light->constant});
-        shader->setUniform(("pointLights[" + std::to_string(i) + "].linear"), {light->linear});
-        shader->setUniform(("pointLights[" + std::to_string(i) + "].quadratic"), {light->quadratic});
+    
+    bool hasDirLight = false;
+    int pointLightsCount = 0;
+    int spotLightsCount = 0;
+    
+    for (const auto& light : lights) {
+        switch (light->getType()) {
+            case Light::LightType::DirLight:
+            {
+                auto dirLight = static_cast<DirectionalLight*>(light);
+                if (!hasDirLight) {
+                    shader->setUniform("dirLight.lightColor", {dirLight->lightColor.x, dirLight->lightColor.y, dirLight->lightColor.z});
+                    shader->setUniform("dirLight.direction", {dirLight->direction.x, dirLight->direction.y, dirLight->direction.z});
+                    shader->setUniform("dirLight.intensity", {dirLight->intensity});
+                    hasDirLight = true;
+                }
+                break;
+            }
+            case Light::LightType::PointLight:
+            {
+                if (pointLightsCount >= 50) break;
+                auto pointLight = static_cast<PointLight*>(light);
+                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].lightColor"), {pointLight->lightColor.x, pointLight->lightColor.y, pointLight->lightColor.z});
+                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].pos"), {pointLight->pos.x, pointLight->pos.y, pointLight->pos.z});
+                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].intensity"), {pointLight->intensity});
+                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].constant"), {pointLight->constant});
+                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].linear"), {pointLight->linear});
+                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].quadratic"), {pointLight->quadratic});
+                pointLightsCount++;
+                break;
+            }
+            case Light::LightType::SpotLight:
+            {
+                if (spotLightsCount >= 50) break;
+                auto spotLight = static_cast<SpotLight*>(light);
+                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].lightColor"), {spotLight->lightColor.x, spotLight->lightColor.y, spotLight->lightColor.z});
+                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].direction"), {spotLight->direction.x, spotLight->direction.y, spotLight->direction.z});
+                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].pos"), {spotLight->pos.x, spotLight->pos.y, spotLight->pos.z});
+                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].intensity"), {spotLight->intensity});
+                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].innerCutOff"), {spotLight->innerCutOff});
+                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].outerCutOff"), {spotLight->outerCutOff});
+                spotLightsCount++;
+                break;
+            }
+            default:
+                break;
+        }
     }
-    shader->setUniform("pointLightsCount", {(int)pointLights.size()});
-    if (dirLight != nullptr) {
-        shader->setUniform("dirLight.lightColor", {dirLight->lightColor.x, dirLight->lightColor.y, dirLight->lightColor.z});
-        shader->setUniform("dirLight.direction", {dirLight->direction.x, dirLight->direction.y, dirLight->direction.z});
-        shader->setUniform("dirLight.intensity", {dirLight->intensity});
-    }
+    shader->setUniform("hasDirLight", {hasDirLight ? 1.0f : 0.0f});
+    shader->setUniform("pointLightsCount", {pointLightsCount});
+    shader->setUniform("spotLightsCount", {spotLightsCount});
     for (auto& obj : objects) {
         auto model = obj->getModelMatrix();
         shader->setUniform("model", model);

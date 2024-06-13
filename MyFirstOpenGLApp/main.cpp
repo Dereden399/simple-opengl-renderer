@@ -68,11 +68,11 @@ int main()
     program.objects.push_back(&cube);
     
     DirectionalLight light = DirectionalLight();
-    light.direction = glm::normalize(glm::vec3(0.0f, -0.5f, -1.0f));
+    light.direction = glm::normalize(glm::vec3(0.0f, 2.0f, 1.0f));
     light.intensity = 1.0f;
     light.lightColor = glm::vec3(1.0f,1.0f,1.0f);
     
-    //program.dirLight = &light;
+    //program.lights.push_back(&light);
     
     PointLight pointLight = PointLight();
     pointLight.lightColor = glm::vec3(1.0f,1.0f,1.0f);
@@ -98,9 +98,19 @@ int main()
     pointLight3.quadratic = 0.2f;
     pointLight3.intensity = 1.0f;
     
-    program.pointLights.push_back(&pointLight);
-    program.pointLights.push_back(&pointLight2);
-    program.pointLights.push_back(&pointLight3);
+    program.lights.push_back(&pointLight);
+    program.lights.push_back(&pointLight2);
+    program.lights.push_back(&pointLight3);
+    
+    SpotLight spotlight = SpotLight();
+    spotlight.direction = glm::normalize(glm::vec3(0.0f, 2.0f, 1.0f));
+    spotlight.intensity = 1.0f;
+    spotlight.lightColor = glm::vec3(1.0f,1.0f,1.0f);
+    spotlight.innerCutOff = 0.97;
+    spotlight.outerCutOff = 0.96;
+    spotlight.pos = glm::vec3(0.0f,0.0f,3.0f);
+    
+    program.lights.push_back(&spotlight);
     
     Camera camera = Camera(glm::vec3(0.0f,0.0f,3.0f), glm::vec3(0.0f,1.0f,0.0f));
     camera.pointAt(cube.pos);
@@ -118,6 +128,9 @@ int main()
         
         pointLight.pos.x = sin(time);
         pointLight.pos.z = cos(time);
+        
+        spotlight.pos = camera.pos;
+        spotlight.direction = -camera.getLookingDirection();
         
         program.render();
         

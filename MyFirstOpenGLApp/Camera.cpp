@@ -27,7 +27,7 @@ void Camera::pointAt(glm::vec3 point) {
     rotation.y = 180-rotationY;
     _forward = direction;
     _right = glm::cross(_forward, _worldUp);
-    _up = glm::cross(_forward, _right);
+    _up = -glm::cross(_forward, _right);
 };
 
 glm::mat4 Camera::getViewMatrix() {

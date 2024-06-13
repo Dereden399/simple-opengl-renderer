@@ -21,8 +21,7 @@ public:
     Camera* selectedCamera;
     Renderer renderer;
     std::vector<Object*> objects;
-    DirectionalLight* dirLight;
-    std::vector<PointLight*> pointLights;
+    std::vector<Light*> lights;
     
     Program();
     

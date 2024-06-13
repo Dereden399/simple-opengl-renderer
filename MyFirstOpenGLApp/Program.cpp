@@ -12,6 +12,7 @@
 Program::Program() {
     selectedCamera = nullptr;
     _window = nullptr;
+    lights = std::vector<Light*>();
     renderer = Renderer();
     _lastFrame = 0.0f;
 };
@@ -104,7 +105,7 @@ void Program::render() {
 
 void Program::endRenderLoop() {
     for (auto& obj : _objectsToDraw) {
-        renderer.drawObjects(obj.first, obj.second, selectedCamera, dirLight, pointLights);
+        renderer.drawObjects(obj.first, obj.second, selectedCamera, lights);
     }
     glfwSwapBuffers(_window);
     glfwPollEvents();
