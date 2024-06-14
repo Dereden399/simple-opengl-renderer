@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iostream>
 #include "Renderer.hpp"
+#include <glm/gtc/type_ptr.hpp>
 
 Renderer::Renderer() {
     _initialised = false;
@@ -19,6 +20,7 @@ Renderer::~Renderer() {
         glDeleteVertexArrays(1, &_VAO);
         glDeleteBuffers(1, &_VBO);
         glDeleteBuffers(1, &_EBO);
+        glDeleteBuffers(1, &_LightsUBO);
     }
 };
 
@@ -43,12 +45,19 @@ void Renderer::initialise() {
     glGenVertexArrays(1, &_VAO);
     glGenBuffers(1, &_VBO);
     glGenBuffers(1, &_EBO);
+    glGenBuffers(1, &_LightsUBO);
     
     glBindVertexArray(_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);
     glBufferData(GL_ARRAY_BUFFER, finalVertices.size()*sizeof(Vertex), finalVertices.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, finalIndices.size()*sizeof(unsigned int), finalIndices.data(), GL_STATIC_DRAW);
+    
+    const size_t lightsUBOSize = 5664;
+    glBindBuffer(GL_UNIFORM_BUFFER, _LightsUBO);
+    glBufferData(GL_UNIFORM_BUFFER, lightsUBOSize, NULL, GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, _LightsUBO);
     
     glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
     glEnableVertexAttribArray(0);
@@ -77,26 +86,26 @@ void Renderer::addStaticMesh(Mesh *mesh) {
     _meshes.push_back(mesh);
 };
 
-void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera, std::vector<Light*> lights = std::vector<Light*>()) {
-    glBindVertexArray(_VAO);
-    shader->use();
-    auto projViewMatrix = camera->getProjectionViewMatrix();
-    shader->setUniform("projectionView", projViewMatrix);
-    shader->setUniform("viewerPos", {camera->pos.x, camera->pos.y, camera->pos.z});
-    
+void Renderer::setLightsUBO(std::vector<Light*>& lights, Camera* camera) {
+    glBindBuffer(GL_UNIFORM_BUFFER, _LightsUBO);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec3), glm::value_ptr(camera->pos));
     bool hasDirLight = false;
     int pointLightsCount = 0;
     int spotLightsCount = 0;
     
+    size_t dirLightOffset = 5632;
+    size_t spotLightsOffset = 2432;
+    size_t pointLightsOffset = 32;
+    
     for (const auto& light : lights) {
+        // horrible hack with pointer sizes because derived classes contain a hidden pointer to a vtable at offset 0, thus moving the whole information on sizeof(pointer)
         switch (light->getType()) {
             case Light::LightType::DirLight:
             {
                 auto dirLight = static_cast<DirectionalLight*>(light);
+                auto d = dirLight->getStruct();
                 if (!hasDirLight) {
-                    shader->setUniform("dirLight.lightColor", {dirLight->lightColor.x, dirLight->lightColor.y, dirLight->lightColor.z});
-                    shader->setUniform("dirLight.direction", {dirLight->direction.x, dirLight->direction.y, dirLight->direction.z});
-                    shader->setUniform("dirLight.intensity", {dirLight->intensity});
+                    glBufferSubData(GL_UNIFORM_BUFFER, dirLightOffset, sizeof(d), &d);
                     hasDirLight = true;
                 }
                 break;
@@ -105,12 +114,8 @@ void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera
             {
                 if (pointLightsCount >= 50) break;
                 auto pointLight = static_cast<PointLight*>(light);
-                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].lightColor"), {pointLight->lightColor.x, pointLight->lightColor.y, pointLight->lightColor.z});
-                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].pos"), {pointLight->pos.x, pointLight->pos.y, pointLight->pos.z});
-                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].intensity"), {pointLight->intensity});
-                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].constant"), {pointLight->constant});
-                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].linear"), {pointLight->linear});
-                shader->setUniform(("pointLights[" + std::to_string(pointLightsCount) + "].quadratic"), {pointLight->quadratic});
+                auto d = pointLight->getStruct();
+                glBufferSubData(GL_UNIFORM_BUFFER, pointLightsOffset + pointLightsCount*48, sizeof(d), &d);
                 pointLightsCount++;
                 break;
             }
@@ -118,12 +123,8 @@ void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera
             {
                 if (spotLightsCount >= 50) break;
                 auto spotLight = static_cast<SpotLight*>(light);
-                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].lightColor"), {spotLight->lightColor.x, spotLight->lightColor.y, spotLight->lightColor.z});
-                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].direction"), {spotLight->direction.x, spotLight->direction.y, spotLight->direction.z});
-                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].pos"), {spotLight->pos.x, spotLight->pos.y, spotLight->pos.z});
-                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].intensity"), {spotLight->intensity});
-                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].innerCutOff"), {spotLight->innerCutOff});
-                shader->setUniform(("spotLights[" + std::to_string(spotLightsCount) + "].outerCutOff"), {spotLight->outerCutOff});
+                auto d = spotLight->getStruct();
+                glBufferSubData(GL_UNIFORM_BUFFER, spotLightsOffset + spotLightsCount*64, sizeof(d), &d);
                 spotLightsCount++;
                 break;
             }
@@ -131,9 +132,19 @@ void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera
                 break;
         }
     }
-    shader->setUniform("hasDirLight", {hasDirLight ? 1.0f : 0.0f});
-    shader->setUniform("pointLightsCount", {pointLightsCount});
-    shader->setUniform("spotLightsCount", {spotLightsCount});
+    float dirLightTerm = hasDirLight ? 1.0f : 0.0f;
+    glBufferSubData(GL_UNIFORM_BUFFER, 12, sizeof(float), &dirLightTerm);
+    glBufferSubData(GL_UNIFORM_BUFFER, 16, sizeof(int), &pointLightsCount);
+    glBufferSubData(GL_UNIFORM_BUFFER, 20, sizeof(int), &spotLightsCount);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+};
+
+void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera) {
+    glBindVertexArray(_VAO);
+    shader->use();
+    auto projViewMatrix = camera->getProjectionViewMatrix();
+    shader->setUniform("projectionView", projViewMatrix);
+
     for (auto& obj : objects) {
         auto model = obj->getModelMatrix();
         shader->setUniform("model", model);

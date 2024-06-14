@@ -104,8 +104,9 @@ void Program::render() {
 }
 
 void Program::endRenderLoop() {
+    renderer.setLightsUBO(lights, selectedCamera);
     for (auto& obj : _objectsToDraw) {
-        renderer.drawObjects(obj.first, obj.second, selectedCamera, lights);
+        renderer.drawObjects(obj.first, obj.second, selectedCamera);
     }
     glfwSwapBuffers(_window);
     glfwPollEvents();

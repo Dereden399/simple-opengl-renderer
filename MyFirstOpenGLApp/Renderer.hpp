@@ -18,7 +18,7 @@
 #include "Lights.hpp"
 
 class Renderer {
-    unsigned int _VAO, _VBO, _EBO;
+    unsigned int _VAO, _VBO, _EBO, _LightsUBO;
     bool _initialised;
     std::vector<Mesh*> _meshes;
 public:
@@ -33,7 +33,8 @@ public:
     
     void initialise();
     void addStaticMesh(Mesh* mesh);
-    void drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera, std::vector<Light*> lights);
+    void drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera);
+    void setLightsUBO(std::vector<Light*>& lights, Camera* camera);
 };
 
 #endif /* Renderer_hpp */

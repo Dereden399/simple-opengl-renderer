@@ -83,6 +83,9 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
         glGetProgramInfoLog(ID, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
+    
+    // setting UBOs
+    glUniformBlockBinding(ID, glGetUniformBlockIndex(ID, "Lights"), 0);
       
     // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);

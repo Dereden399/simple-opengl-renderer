@@ -71,6 +71,7 @@ int main()
     light.direction = glm::normalize(glm::vec3(0.0f, 2.0f, 1.0f));
     light.intensity = 1.0f;
     light.lightColor = glm::vec3(1.0f,1.0f,1.0f);
+    light.ambientIntensity = 0.1f;
     
     //program.lights.push_back(&light);
     
@@ -81,6 +82,7 @@ int main()
     pointLight.linear = 0.22f;
     pointLight.quadratic = 0.2f;
     pointLight.intensity = 1.0f;
+    pointLight.ambientIntensity = 0.1f;
     
     PointLight pointLight2 = PointLight();
     pointLight2.lightColor = glm::vec3(0.0f,1.0f,1.0f);
@@ -89,6 +91,7 @@ int main()
     pointLight2.linear = 0.22f;
     pointLight2.quadratic = 0.2f;
     pointLight2.intensity = 1.0f;
+    pointLight2.ambientIntensity = 0.1f;
     
     PointLight pointLight3 = PointLight();
     pointLight3.lightColor = glm::vec3(1.0f,0.0f,0.0f);
@@ -97,6 +100,7 @@ int main()
     pointLight3.linear = 0.22f;
     pointLight3.quadratic = 0.2f;
     pointLight3.intensity = 1.0f;
+    pointLight3.ambientIntensity = 0.1f;
     
     program.lights.push_back(&pointLight);
     program.lights.push_back(&pointLight2);
@@ -109,6 +113,7 @@ int main()
     spotlight.innerCutOff = 0.97;
     spotlight.outerCutOff = 0.96;
     spotlight.pos = glm::vec3(0.0f,0.0f,3.0f);
+    spotlight.ambientIntensity = 0.1f;
     
     program.lights.push_back(&spotlight);
     
