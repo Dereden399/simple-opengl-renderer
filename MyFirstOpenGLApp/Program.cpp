@@ -6,50 +6,19 @@
 //
 
 #include "Program.hpp"
+
 #include <iostream>
 #include <glad/glad.h>
 
 Program::Program() {
     selectedCamera = nullptr;
     _window = nullptr;
-    lights = std::vector<Light*>();
     renderer = Renderer();
+    resourcesManager = ResourcesManager();
+    resourcesManager.setRenderer(&renderer);
+    mainNode = nullptr;
     _lastFrame = 0.0f;
 };
-
-Renderer::Renderer(Renderer&& r)
-    : _VAO(r._VAO), _VBO(r._VBO), _EBO(r._EBO), _initialised(r._initialised), _meshes(std::move(r._meshes)) {
-    // Leave the source object in a valid state
-    r._VAO = 0;
-    r._VBO = 0;
-    r._EBO = 0;
-    r._initialised = false;
-}
-
-Renderer& Renderer::operator=(Renderer&& r) {
-    if (this != &r) {
-        // Clean up existing resources if initialised
-        if (_initialised) {
-            glDeleteVertexArrays(1, &_VAO);
-            glDeleteBuffers(1, &_VBO);
-            glDeleteBuffers(1, &_EBO);
-        }
-
-        // Move data from the source object
-        _VAO = r._VAO;
-        _VBO = r._VBO;
-        _EBO = r._EBO;
-        _initialised = r._initialised;
-        _meshes = std::move(r._meshes);
-
-        // Leave the source object in a valid state
-        r._VAO = 0;
-        r._VBO = 0;
-        r._EBO = 0;
-        r._initialised = false;
-    }
-    return *this;
-}
 
 void Program::_framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -83,13 +52,13 @@ int Program::initialise() {
         if (progPtr) {}
     });
     glEnable(GL_DEPTH_TEST);
+    _initialized = true;
     return 0;
 };
 
 std::pair<float, float> Program::startRenderLoop() {
-    glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+    glClearColor(0.35f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    _objectsToDraw.clear();
     float curFrame = glfwGetTime();
     _deltaTime = curFrame - _lastFrame;
     _lastFrame = curFrame;
@@ -97,17 +66,8 @@ std::pair<float, float> Program::startRenderLoop() {
     return std::make_pair(curFrame, _deltaTime);
 }
 
-void Program::render() {
-    for (auto& obj : objects) {
-        _objectsToDraw[obj->shader].push_back(obj);
-    }
-}
-
 void Program::endRenderLoop() {
-    renderer.setLightsUBO(lights, selectedCamera);
-    for (auto& obj : _objectsToDraw) {
-        renderer.drawObjects(obj.first, obj.second, selectedCamera);
-    }
+    renderer.drawNode(mainNode, selectedCamera);
     glfwSwapBuffers(_window);
     glfwPollEvents();
 }
@@ -118,26 +78,28 @@ bool Program::shouldWindowClose() {
 
 void Program::_handleInput() {
     if (selectedCamera == nullptr) return;
-    auto cameraBasis = selectedCamera->getCameraBasis();
+    auto _forward = selectedCamera->getBasisForward();
+    auto _up = selectedCamera->getBasisUp();
+    auto _right = selectedCamera->getBasisRight();
     glm::vec3 mov = glm::vec3(0.0f);
     glm::vec3 rot = glm::vec3(0.0f);
     if(glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(_window, true);
     
     if(glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
-        mov += glm::vec3(cameraBasis[0]);
+        mov += _forward;
     else if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
-        mov -= glm::vec3(cameraBasis[0]);
+        mov -= _forward;
     
     if(glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
-        mov -= glm::vec3(cameraBasis[1]);
+        mov += _right;
     else if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
-        mov += glm::vec3(cameraBasis[1]);
+        mov -= _right;
     
     if(glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        mov -= glm::vec3(cameraBasis[2]);
+        mov -= _up;
     else if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        mov += glm::vec3(cameraBasis[2]);
+        mov += _up;
     
     if(glfwGetKey(_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         rot.y -= 1;
@@ -145,9 +107,9 @@ void Program::_handleInput() {
         rot.y += 1;
     
     if(glfwGetKey(_window, GLFW_KEY_UP) == GLFW_PRESS)
-        rot.x += 1;
-    else if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS)
         rot.x -= 1;
+    else if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        rot.x += 1;
     
     
     if (mov != glm::vec3(0.0f))

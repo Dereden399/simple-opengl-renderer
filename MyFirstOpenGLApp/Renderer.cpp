@@ -9,14 +9,14 @@
 #include <iostream>
 #include "Renderer.hpp"
 #include <glm/gtc/type_ptr.hpp>
+#include <unordered_map>
 
 Renderer::Renderer() {
-    _initialised = false;
-    _meshes = std::vector<Mesh*>();
+    _initialized = false;
 };
 
 Renderer::~Renderer() {
-    if (_initialised) {
+    if (_initialized) {
         glDeleteVertexArrays(1, &_VAO);
         glDeleteBuffers(1, &_VBO);
         glDeleteBuffers(1, &_EBO);
@@ -24,22 +24,16 @@ Renderer::~Renderer() {
     }
 };
 
-
-void Renderer::initialise() {
+void Renderer::initialize(std::vector<Mesh*> meshes) {
+    if (_initialized) return;
+    
     std::vector<Vertex> finalVertices;
     std::vector<unsigned int> finalIndices;
-    unsigned int startIndex = 0;
-    for (auto mesh : _meshes) {
-        mesh->globalStartIndex = startIndex;
+    for (const auto& mesh : meshes) {
         finalVertices.insert(finalVertices.end(), mesh->vertices.begin(), mesh->vertices.end());
-        unsigned int maxIndexUsedInMesh = 0;
-        for (auto idx : mesh->localIndices) {
-            if (idx > maxIndexUsedInMesh) {
-                maxIndexUsedInMesh = idx;
-            }
-            finalIndices.push_back(idx+startIndex);
+        for (int i = 0; i < mesh->size; i++) {
+            finalIndices.push_back(mesh->localIndices[i] + mesh->globalStartIndex);
         }
-        startIndex += maxIndexUsedInMesh + 1;
     }
     
     glGenVertexArrays(1, &_VAO);
@@ -59,36 +53,54 @@ void Renderer::initialise() {
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, _LightsUBO);
     
-    glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1,2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
+    glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2,3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, nx));
+    glVertexAttribPointer(1,3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, norm));
     glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2,2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, text));
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
-    _initialised = true;
+    _initialized = true;
 };
 
-void Renderer::addStaticMesh(Mesh *mesh) {
-    if (_initialised) {
-        std::cout << "ERROR::RENDERER: Can't add static mesh after initialization" << std::endl;
-        return;
+Renderer::Renderer(Renderer&& r)
+: _VAO(r._VAO), _VBO(r._VBO), _EBO(r._EBO), _initialized(r._initialized) {
+    // Leave the source object in a valid state
+    r._VAO = 0;
+    r._VBO = 0;
+    r._EBO = 0;
+    r._initialized = false;
+}
+
+Renderer& Renderer::operator=(Renderer&& r) {
+    if (this != &r) {
+        // Clean up existing resources if initialised
+        if (_initialized) {
+            glDeleteVertexArrays(1, &_VAO);
+            glDeleteBuffers(1, &_VBO);
+            glDeleteBuffers(1, &_EBO);
+        }
+
+        // Move data from the source object
+        _VAO = r._VAO;
+        _VBO = r._VBO;
+        _EBO = r._EBO;
+        _initialized = r._initialized;
+
+        // Leave the source object in a valid state
+        r._VAO = 0;
+        r._VBO = 0;
+        r._EBO = 0;
+        r._initialized = false;
     }
-    auto wasAdded = std::find_if(_meshes.begin(), _meshes.end(), [&mesh](Mesh* m_) {
-        return m_ == mesh;
-    });
-    if (wasAdded != _meshes.end()) {
-        // is already in _meshes
-        return;
-    }
-    _meshes.push_back(mesh);
-};
+    return *this;
+}
 
 void Renderer::setLightsUBO(std::vector<Light*>& lights, Camera* camera) {
     glBindBuffer(GL_UNIFORM_BUFFER, _LightsUBO);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec3), glm::value_ptr(camera->pos));
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec3), glm::value_ptr(camera->position));
     bool hasDirLight = false;
     int pointLightsCount = 0;
     int spotLightsCount = 0;
@@ -98,12 +110,12 @@ void Renderer::setLightsUBO(std::vector<Light*>& lights, Camera* camera) {
     size_t pointLightsOffset = 32;
     
     for (const auto& light : lights) {
-        // horrible hack with pointer sizes because derived classes contain a hidden pointer to a vtable at offset 0, thus moving the whole information on sizeof(pointer)
-        switch (light->getType()) {
+        auto type = light->getType();
+        switch (type) {
             case Light::LightType::DirLight:
             {
                 auto dirLight = static_cast<DirectionalLight*>(light);
-                auto d = dirLight->getStruct();
+                auto d = (dirLight->info);
                 if (!hasDirLight) {
                     glBufferSubData(GL_UNIFORM_BUFFER, dirLightOffset, sizeof(d), &d);
                     hasDirLight = true;
@@ -114,7 +126,7 @@ void Renderer::setLightsUBO(std::vector<Light*>& lights, Camera* camera) {
             {
                 if (pointLightsCount >= 50) break;
                 auto pointLight = static_cast<PointLight*>(light);
-                auto d = pointLight->getStruct();
+                auto d = (pointLight->info);
                 glBufferSubData(GL_UNIFORM_BUFFER, pointLightsOffset + pointLightsCount*48, sizeof(d), &d);
                 pointLightsCount++;
                 break;
@@ -123,7 +135,7 @@ void Renderer::setLightsUBO(std::vector<Light*>& lights, Camera* camera) {
             {
                 if (spotLightsCount >= 50) break;
                 auto spotLight = static_cast<SpotLight*>(light);
-                auto d = spotLight->getStruct();
+                auto d = (spotLight->info);
                 glBufferSubData(GL_UNIFORM_BUFFER, spotLightsOffset + spotLightsCount*64, sizeof(d), &d);
                 spotLightsCount++;
                 break;
@@ -139,32 +151,64 @@ void Renderer::setLightsUBO(std::vector<Light*>& lights, Camera* camera) {
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 };
 
-void Renderer::drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera) {
+void Renderer::drawNode(Node* node, Camera* camera) {
+    std::unordered_map<Shader*, std::vector<Model*>> models;
+    std::vector<Light*> lights;
+    for (const auto& n : node->children) {
+        switch (n->getNodeType()) {
+            case Node::NodeType::Model: {
+                auto model = static_cast<Model*>(n);
+                models[model->shader].push_back(model);
+                break;
+            }
+            case Node::NodeType::Light: {
+                auto light = static_cast<Light*>(n);
+                lights.push_back(light);
+                break;
+            }
+            default:
+                break;
+        }
+    }
     glBindVertexArray(_VAO);
+    setLightsUBO(lights, camera);
+    for (auto& [key, value] : models) {
+        drawModels(key, value, camera);
+    }
+};
+
+void Renderer::drawModels(Shader* shader, std::vector<Model*>& models, Camera* camera) {
     shader->use();
     auto projViewMatrix = camera->getProjectionViewMatrix();
     shader->setUniform("projectionView", projViewMatrix);
-
-    for (auto& obj : objects) {
-        auto model = obj->getModelMatrix();
-        shader->setUniform("model", model);
-        auto normalsModel = glm::transpose(glm::inverse(model));
+    
+    for (auto& model : models) {
+        auto modelMatrix = model->getModelMatrix();
+        shader->setUniform("model", modelMatrix);
+        auto normalsModel = glm::transpose(glm::inverse(modelMatrix));
         shader->setUniform("normalsModel", normalsModel);
-        const auto& material = obj->material;
-        if (material->diffuseMap != nullptr) {
-            material->diffuseMap->bind(GL_TEXTURE0);
-            shader->setUniform("diffuseMap", {0});
-        }
-        shader->setUniform("useDiffuseMap", {material->diffuseMap != nullptr});
-        if (material->specularMap != nullptr) {
-            material->specularMap->bind(GL_TEXTURE1);
-            shader->setUniform("specularMap", {1});
-        }
-        shader->setUniform("useSpecularMap", {material->specularMap != nullptr});
-        shader->setUniform("diffuseColor", {material->diffuseColor.x, material->diffuseColor.y, material->diffuseColor.z});
-        shader->setUniform("specularColor", {material->specularColor.x, material->specularColor.y, material->specularColor.z});
-        shader->setUniform("shininess", {material->shininess});
         
-        glDrawElements(GL_TRIANGLES, obj->mesh->size, GL_UNSIGNED_INT, (void*)(size_t)(obj->mesh->globalStartIndex));
+        for (const auto& pair : model->meshes) {
+            auto& material = pair.material;
+            auto& mesh = pair.mesh;
+            
+            shader->setUniform("material.shininess", {material->shininess});
+            int diffNum = 0;
+            int specNum = 0;
+            for (int i = 0; i < material->textures.size(); i++) {
+                material->textures[i]->bind(GL_TEXTURE0 + i);
+                std::string type = material->textures[i]->type;
+                std::string number;
+                if(type == "texture_diffuse")
+                    number = std::to_string(diffNum++);
+                else if(type == "texture_specular")
+                    number = std::to_string(specNum++);
+                shader->setUniform(("material." + type + number).c_str(), {i});
+            }
+            shader->setUniform("material.blendColor", {material->blendColor.x,material->blendColor.y,material->blendColor.z, 1.0f});
+            //std::cout << glGetError() << std::endl;
+            glDrawElements(GL_TRIANGLES, mesh->size, GL_UNSIGNED_INT, (void*)(size_t)(mesh->globalStartIndex));
+            //std::cout << glGetError() << std::endl;
+        }
     }
 };

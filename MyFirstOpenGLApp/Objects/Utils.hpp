@@ -11,34 +11,47 @@
 #include <glm/glm.hpp>
 
 struct Vertex {
-    float x,y,z;
-    float u,w;
-    float nx,ny,nz;
+    glm::vec3 pos;
+    glm::vec3 norm;
+    glm::vec2 text;
     
-    Vertex(float x_, float y_, float z_) : x(x_), y(y_), z(z_), u(0), w(0), nx(0), ny(0), nz(0) {};
-    Vertex(float x_, float y_, float z_, float u_, float w_) : x(x_), y(y_), z(z_), u(u_), w(w_), nx(0), ny(0), nz(0) {};
-    Vertex(float x_, float y_, float z_, float u_, float w_, float nx_, float ny_, float nz_) : x(x_), y(y_), z(z_), u(u_), w(w_), nx(nx_), ny(ny_), nz(nz_) {};
+    Vertex(glm::vec3 pos_, glm::vec3 norm_ = glm::vec3(0.0f), glm::vec2 text_ = glm::vec2(0.0f)): pos(pos_), norm(norm_), text(text_) {};
+    Vertex(glm::vec3 pos_, glm::vec2 text_ = glm::vec2(0.0f), glm::vec3 norm_ = glm::vec3(0.0f)): pos(pos_), norm(norm_), text(text_) {};
 };
 
 class Movable {
 public:
-    glm::vec3 pos;
-    Movable() : pos(glm::vec3(0.0f)) {};
-    Movable(glm::vec3 pos_): pos(pos_) {};
+    glm::vec3 position;
+    Movable() : position(glm::vec3(0.0f)) {};
+    Movable(glm::vec3 pos_): position(pos_) {};
     
     void move(glm::vec3 dir) {
-        pos += dir;
+        position += dir;
     };
 };
 
 class Rotatable {
-public:
-    glm::vec3 rotation;
-    Rotatable() : rotation(glm::vec3(0.0f)) {};
-    Rotatable(glm::vec3 rot_) : rotation(rot_) {};
+protected:
+    glm::vec3 _rotation;
+    glm::vec3 _forward;
+    glm::vec3 _up;
+    glm::vec3 _right;
     
-    glm::mat4 getRotationMatrix() {return getRotationMatrix(rotation);};
+    void updateBasis();
+    glm::mat3 getRotationMatrix3x3();
+public:
+    Rotatable() : _rotation(glm::vec3(0.0f)) {updateBasis();};
+    Rotatable(glm::vec3 rot_) : _rotation(rot_) {updateBasis();};
+    glm::mat4 getRotationMatrix() {return getRotationMatrix(_rotation);};
     glm::mat4 getRotationMatrix(glm::vec3 angles);
+    
+    glm::vec3 getBasisForward() const {return _forward;};
+    glm::vec3 getBasisUp() const {return _up;};
+    glm::vec3 getBasisRight() const {return _right;};
+    
+    void rotate(glm::vec3 angles);
+    void setRotation(glm::vec3 angles);
+    void faceTo(const glm::vec3& dir);
 };
 
 class Scalable {

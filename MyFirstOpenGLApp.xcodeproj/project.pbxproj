@@ -7,23 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		922A52F62C1EE1E500AB9C78 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 922A52F42C1EE1E500AB9C78 /* ResourcesManager.cpp */; };
+		922A52F92C1F031500AB9C78 /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 922A52F72C1F031500AB9C78 /* Model.cpp */; };
+		922A52FF2C2035D600AB9C78 /* defaultTexture.png in Copy Assets */ = {isa = PBXBuildFile; fileRef = 922A52FE2C2035C800AB9C78 /* defaultTexture.png */; };
+		922A5C6A2C1DA80500099BC4 /* libassimp.5.4.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 922A5C692C1DA80500099BC4 /* libassimp.5.4.1.dylib */; };
 		9236E5072C0FA68000423CAD /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9236E5062C0FA68000423CAD /* Shader.cpp */; };
 		9236E5112C10A32700423CAD /* vertexShader.glsl in Copy Shaders */ = {isa = PBXBuildFile; fileRef = 9236E50F2C10A2D600423CAD /* vertexShader.glsl */; };
 		9236E5122C10A32F00423CAD /* fragmentShader.glsl in Copy Shaders */ = {isa = PBXBuildFile; fileRef = 9236E5102C10A2F600423CAD /* fragmentShader.glsl */; };
 		9236E5142C10DC4500423CAD /* stb_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9236E5132C10DC4500423CAD /* stb_image.cpp */; };
 		9236E5182C10E24600423CAD /* container.jpg in Copy Assets */ = {isa = PBXBuildFile; fileRef = 9236E5162C10DCE000423CAD /* container.jpg */; };
 		9236E51B2C10E5AD00423CAD /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9236E5192C10E5AD00423CAD /* Texture.cpp */; };
-		9236E51D2C10EB1000423CAD /* awesomeface.png in Copy Assets */ = {isa = PBXBuildFile; fileRef = 9236E51C2C10EB0B00423CAD /* awesomeface.png */; };
 		92C628702C0278FE00C3CA16 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92C6286F2C0278FE00C3CA16 /* main.cpp */; };
 		92C628782C027EF900C3CA16 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92C628772C027EF900C3CA16 /* OpenGL.framework */; };
 		92C6287C2C027FD200C3CA16 /* libglfw.3.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 92C6287B2C027FD200C3CA16 /* libglfw.3.4.dylib */; };
 		92C6287E2C02861E00C3CA16 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 92C6287D2C02861E00C3CA16 /* glad.c */; };
-		92EC0BC02C120024001A3637 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BBE2C120024001A3637 /* Object.cpp */; };
 		92EC0BC72C138AA7001A3637 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BC52C138AA7001A3637 /* Renderer.cpp */; };
 		92EC0BD02C146499001A3637 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BCE2C146499001A3637 /* Camera.cpp */; };
 		92EC0BD72C159E8C001A3637 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BD52C159E8C001A3637 /* Utils.cpp */; };
 		92EC0BDA2C15B3CD001A3637 /* Program.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BD82C15B3CD001A3637 /* Program.cpp */; };
 		92EC0BE32C1A23A4001A3637 /* Lights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92EC0BE12C1A23A4001A3637 /* Lights.cpp */; };
+		92EC0BE62C1D8A4A001A3637 /* container2_specular.png in Copy Assets */ = {isa = PBXBuildFile; fileRef = 92EC0BE52C1D8A2D001A3637 /* container2_specular.png */; };
+		92EC0BE72C1D8A4D001A3637 /* container2.png in Copy Assets */ = {isa = PBXBuildFile; fileRef = 92EC0BE42C1D8A27001A3637 /* container2.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,8 +37,10 @@
 			dstPath = Assets;
 			dstSubfolderSpec = 16;
 			files = (
+				922A52FF2C2035D600AB9C78 /* defaultTexture.png in Copy Assets */,
 				9236E5182C10E24600423CAD /* container.jpg in Copy Assets */,
-				9236E51D2C10EB1000423CAD /* awesomeface.png in Copy Assets */,
+				92EC0BE62C1D8A4A001A3637 /* container2_specular.png in Copy Assets */,
+				92EC0BE72C1D8A4D001A3637 /* container2.png in Copy Assets */,
 			);
 			name = "Copy Assets";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -54,6 +60,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		922A52F42C1EE1E500AB9C78 /* ResourcesManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourcesManager.cpp; sourceTree = "<group>"; };
+		922A52F52C1EE1E500AB9C78 /* ResourcesManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourcesManager.hpp; sourceTree = "<group>"; };
+		922A52F72C1F031500AB9C78 /* Model.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Model.cpp; sourceTree = "<group>"; };
+		922A52F82C1F031500AB9C78 /* Model.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Model.hpp; sourceTree = "<group>"; };
+		922A52FB2C1F04F100AB9C78 /* Node.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Node.hpp; sourceTree = "<group>"; };
+		922A52FE2C2035C800AB9C78 /* defaultTexture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = defaultTexture.png; sourceTree = "<group>"; };
+		922A5C692C1DA80500099BC4 /* libassimp.5.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.5.4.1.dylib; path = ../../../../../../opt/homebrew/Cellar/assimp/5.4.1/lib/libassimp.5.4.1.dylib; sourceTree = "<group>"; };
 		9236E5052C0FA59100423CAD /* Shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shader.hpp; sourceTree = "<group>"; };
 		9236E5062C0FA68000423CAD /* Shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
 		9236E50F2C10A2D600423CAD /* vertexShader.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = vertexShader.glsl; sourceTree = "<group>"; };
@@ -62,15 +75,12 @@
 		9236E5162C10DCE000423CAD /* container.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = container.jpg; sourceTree = "<group>"; };
 		9236E5192C10E5AD00423CAD /* Texture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Texture.cpp; sourceTree = "<group>"; };
 		9236E51A2C10E5AD00423CAD /* Texture.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Texture.hpp; sourceTree = "<group>"; };
-		9236E51C2C10EB0B00423CAD /* awesomeface.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = awesomeface.png; sourceTree = "<group>"; };
 		92C6286C2C0278FE00C3CA16 /* MyFirstOpenGLApp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MyFirstOpenGLApp; sourceTree = BUILT_PRODUCTS_DIR; };
 		92C6286F2C0278FE00C3CA16 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		92C628772C027EF900C3CA16 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		92C628792C027FAD00C3CA16 /* libGLEW.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.2.0.dylib; path = ../../../../../../opt/homebrew/Cellar/glew/2.2.0_1/lib/libGLEW.2.2.0.dylib; sourceTree = "<group>"; };
 		92C6287B2C027FD200C3CA16 /* libglfw.3.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.4.dylib; path = ../../../../../../opt/homebrew/Cellar/glfw/3.4/lib/libglfw.3.4.dylib; sourceTree = "<group>"; };
 		92C6287D2C02861E00C3CA16 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
-		92EC0BBE2C120024001A3637 /* Object.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
-		92EC0BBF2C120024001A3637 /* Object.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Object.hpp; sourceTree = "<group>"; };
 		92EC0BC52C138AA7001A3637 /* Renderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		92EC0BC62C138AA7001A3637 /* Renderer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Renderer.hpp; sourceTree = "<group>"; };
 		92EC0BC92C139949001A3637 /* Mesh.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Mesh.hpp; sourceTree = "<group>"; };
@@ -83,6 +93,10 @@
 		92EC0BDF2C19C9EA001A3637 /* Material.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Material.hpp; sourceTree = "<group>"; };
 		92EC0BE12C1A23A4001A3637 /* Lights.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lights.cpp; sourceTree = "<group>"; };
 		92EC0BE22C1A23A4001A3637 /* Lights.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Lights.hpp; sourceTree = "<group>"; };
+		92EC0BE42C1D8A27001A3637 /* container2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = container2.png; sourceTree = "<group>"; };
+		92EC0BE52C1D8A2D001A3637 /* container2_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = container2_specular.png; sourceTree = "<group>"; };
+		92EC0BE82C1D9443001A3637 /* libassimp.5.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.5.4.1.dylib; path = ../../../cppLibraries/assimp/libassimp.5.4.1.dylib; sourceTree = "<group>"; };
+		92EC0BEA2C1DA350001A3637 /* unit */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = unit; path = ../../../cppLibraries/assimp/unit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +104,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				922A5C6A2C1DA80500099BC4 /* libassimp.5.4.1.dylib in Frameworks */,
 				92C6287C2C027FD200C3CA16 /* libglfw.3.4.dylib in Frameworks */,
 				92C628782C027EF900C3CA16 /* OpenGL.framework in Frameworks */,
 			);
@@ -110,7 +125,9 @@
 		9236E5152C10DCCD00423CAD /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				9236E51C2C10EB0B00423CAD /* awesomeface.png */,
+				922A52FE2C2035C800AB9C78 /* defaultTexture.png */,
+				92EC0BE52C1D8A2D001A3637 /* container2_specular.png */,
+				92EC0BE42C1D8A27001A3637 /* container2.png */,
 				9236E5162C10DCE000423CAD /* container.jpg */,
 			);
 			path = Assets;
@@ -154,6 +171,8 @@
 				92EC0BD92C15B3CD001A3637 /* Program.hpp */,
 				92EC0BE12C1A23A4001A3637 /* Lights.cpp */,
 				92EC0BE22C1A23A4001A3637 /* Lights.hpp */,
+				922A52F42C1EE1E500AB9C78 /* ResourcesManager.cpp */,
+				922A52F52C1EE1E500AB9C78 /* ResourcesManager.hpp */,
 			);
 			path = MyFirstOpenGLApp;
 			sourceTree = "<group>";
@@ -161,6 +180,9 @@
 		92C628762C027EF900C3CA16 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				922A5C692C1DA80500099BC4 /* libassimp.5.4.1.dylib */,
+				92EC0BEA2C1DA350001A3637 /* unit */,
+				92EC0BE82C1D9443001A3637 /* libassimp.5.4.1.dylib */,
 				92C6287B2C027FD200C3CA16 /* libglfw.3.4.dylib */,
 				92C628792C027FAD00C3CA16 /* libGLEW.2.2.0.dylib */,
 				92C628772C027EF900C3CA16 /* OpenGL.framework */,
@@ -171,12 +193,13 @@
 		92EC0BBD2C120016001A3637 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
-				92EC0BBE2C120024001A3637 /* Object.cpp */,
-				92EC0BBF2C120024001A3637 /* Object.hpp */,
 				92EC0BC92C139949001A3637 /* Mesh.hpp */,
 				92EC0BD52C159E8C001A3637 /* Utils.cpp */,
 				92EC0BD62C159E8C001A3637 /* Utils.hpp */,
 				92EC0BDF2C19C9EA001A3637 /* Material.hpp */,
+				922A52F72C1F031500AB9C78 /* Model.cpp */,
+				922A52F82C1F031500AB9C78 /* Model.hpp */,
+				922A52FB2C1F04F100AB9C78 /* Node.hpp */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -240,9 +263,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				92EC0BDA2C15B3CD001A3637 /* Program.cpp in Sources */,
+				922A52F92C1F031500AB9C78 /* Model.cpp in Sources */,
 				9236E51B2C10E5AD00423CAD /* Texture.cpp in Sources */,
 				92C628702C0278FE00C3CA16 /* main.cpp in Sources */,
-				92EC0BC02C120024001A3637 /* Object.cpp in Sources */,
 				92EC0BD02C146499001A3637 /* Camera.cpp in Sources */,
 				9236E5142C10DC4500423CAD /* stb_image.cpp in Sources */,
 				92EC0BC72C138AA7001A3637 /* Renderer.cpp in Sources */,
@@ -250,6 +273,7 @@
 				92EC0BD72C159E8C001A3637 /* Utils.cpp in Sources */,
 				92C6287E2C02861E00C3CA16 /* glad.c in Sources */,
 				92EC0BE32C1A23A4001A3637 /* Lights.cpp in Sources */,
+				922A52F62C1EE1E500AB9C78 /* ResourcesManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,6 +413,7 @@
 					"$(inherited)",
 					/opt/homebrew/Cellar/glew/2.2.0_1/lib,
 					/opt/homebrew/Cellar/glfw/3.4/lib,
+					/opt/homebrew/Cellar/assimp/5.4.1/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -404,6 +429,7 @@
 					"$(inherited)",
 					/opt/homebrew/Cellar/glew/2.2.0_1/lib,
 					/opt/homebrew/Cellar/glfw/3.4/lib,
+					/opt/homebrew/Cellar/assimp/5.4.1/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

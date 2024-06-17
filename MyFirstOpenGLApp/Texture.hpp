@@ -15,11 +15,12 @@
 class Texture {
 public:
     unsigned int ID;
-    const char* name[256];
+    std::string path;
+    std::string type;
     
     int width, height, nrChannels;
     
-    Texture(std::string path, std::string name, GLint internalformat, GLenum format, bool flip, GLint sWrapMode, GLint tWrapMode, GLint magMode, GLint minMode);
+    Texture(std::string path_, std::string type_, GLint internalformat, GLenum format, bool flip = false);
     
     void bind(GLenum unit);
 };

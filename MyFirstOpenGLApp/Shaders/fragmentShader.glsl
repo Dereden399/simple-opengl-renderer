@@ -44,62 +44,60 @@ in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
 
+struct Material {
+    sampler2D texture_diffuse0;
+    sampler2D texture_specular0;
+    vec4 blendColor;
+    float shininess;
+};
 
-uniform sampler2D diffuseMap;
-uniform sampler2D specularMap;
-uniform bool useDiffuseMap;
-uniform bool useSpecularMap;
-uniform vec3 diffuseColor;
-uniform vec3 specularColor;
-uniform float shininess;
-
-
+uniform Material material;
 
 
-vec3 calcDiffuseColor(inout vec3 normal, vec3 lightDir, inout vec3 diffuseMaterialColor) {
+vec4 calcDiffuseColor(inout vec3 normal, vec3 lightDir, inout vec4 diffuseMaterialColor) {
     float diff = max(dot(normal, -lightDir), 0.0);
     return diff*diffuseMaterialColor;
 }
 
-vec3 calcSpecularColor(inout vec3 specularMaterialColor, inout vec3 normal, vec3 lightDir, inout vec3 viewDir) {
+vec4 calcSpecularColor(inout vec4 specularMaterialColor, inout vec3 normal, vec3 lightDir, inout vec3 viewDir) {
     vec3 reflectDir = reflect(lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-    return specularMaterialColor * spec*0.5;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    return specularMaterialColor * spec;
 }
 
-vec3 calcPhongColor( vec3 lightColor, inout float ambientIntensity, inout vec3 normal, vec3 lightDir, inout vec3 viewDir, inout vec3 diffuseMaterialColor, inout vec3 specularMaterialColor) {
-    vec3 ambient = diffuseMaterialColor*ambientIntensity;
-    vec3 diffuse = calcDiffuseColor(normal, lightDir, diffuseMaterialColor);
-    vec3 specular = calcSpecularColor(specularMaterialColor, normal, lightDir, viewDir);
-    return (ambient+diffuse+specular)*lightColor;
+vec4 calcPhongColor( vec3 lightColor, inout float ambientIntensity, inout vec3 normal, vec3 lightDir, inout vec3 viewDir, inout vec4 diffuseMaterialColor, inout vec4 specularMaterialColor) {
+    vec4 ambient = diffuseMaterialColor*ambientIntensity;
+    vec4 diffuse = calcDiffuseColor(normal, lightDir, diffuseMaterialColor);
+    vec4 specular = calcSpecularColor(specularMaterialColor, normal, lightDir, viewDir);
+    return (ambient+diffuse+specular)*vec4(lightColor, 1.0);
 }
 
-vec3 calcDirLight(DirectionalLight light, inout vec3 normal, inout vec3 viewDir, inout vec3 diffuseMaterialColor, inout vec3 specularMaterialColor) {
+vec4 calcDirLight(DirectionalLight light, inout vec3 normal, inout vec3 viewDir, inout vec4 diffuseMaterialColor, inout vec4 specularMaterialColor) {
     vec3 lightDir = normalize(-light.direction);
-    vec3 phongColor = calcPhongColor(light.lightColor, light.ambientIntensity, normal, lightDir, viewDir, diffuseMaterialColor, specularMaterialColor);
+    vec4 phongColor = calcPhongColor(light.lightColor, light.ambientIntensity, normal, lightDir, viewDir, diffuseMaterialColor, specularMaterialColor);
     return hasDirLight*phongColor*light.intensity;
 }
 
-vec3 calcPointLight(PointLight light, inout vec3 normal, inout vec3 viewDir, inout vec3 diffuseMaterialColor, inout vec3 specularMaterialColor) {
+vec4 calcPointLight(PointLight light, inout vec3 normal, inout vec3 viewDir, inout vec4 diffuseMaterialColor, inout vec4 specularMaterialColor) {
     vec3 lightDir = FragPos - light.pos;
     float distance    = length(lightDir);
     lightDir = normalize(lightDir);
     float attenuation = 1.0 / (light.constant + light.linear * distance +
                                light.quadratic * (distance * distance));
-    vec3 phongColor = calcPhongColor(light.lightColor, light.ambientIntensity, normal, lightDir, viewDir, diffuseMaterialColor, specularMaterialColor);
+    vec4 phongColor = calcPhongColor(light.lightColor, light.ambientIntensity, normal, lightDir, viewDir, diffuseMaterialColor, specularMaterialColor);
     return phongColor*light.intensity*attenuation;
 }
 
-vec3 calcSpotlight(Spotlight light, inout vec3 normal, inout vec3 viewDir, inout vec3 diffuseMaterialColor, inout vec3 specularMaterialColor) {
+vec4 calcSpotlight(Spotlight light, inout vec3 normal, inout vec3 viewDir, inout vec4 diffuseMaterialColor, inout vec4 specularMaterialColor) {
     vec3 lightDir = FragPos - light.pos;
     float distance    = length(lightDir);
     lightDir = normalize(lightDir);
-    float theta = dot(lightDir, -normalize(light.direction));
+    float theta = dot(lightDir, normalize(light.direction));
     float epsilon = light.innerCutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
     float distanceIntensity = clamp(2-distance*0.2, 0.0, 1.0);
     
-    vec3 phongColor = calcPhongColor(light.lightColor, light.ambientIntensity, normal, lightDir, viewDir, diffuseMaterialColor, specularMaterialColor);
+    vec4 phongColor = calcPhongColor(light.lightColor, light.ambientIntensity, normal, lightDir, viewDir, diffuseMaterialColor, specularMaterialColor);
     
     return phongColor*light.intensity*intensity*distanceIntensity;
 }
@@ -109,22 +107,16 @@ void main()
     vec3 norm = Normal;
     vec3 viewDir = normalize(viewerPos - FragPos);
     
-    vec3 fragmentDiffuseColor = diffuseColor;
-    if (useDiffuseMap) {
-        fragmentDiffuseColor = texture(diffuseMap, TexCoord).xyz;
-    }
+    vec4 fragmentDiffuseColor = texture(material.texture_diffuse0, TexCoord);
     
-    vec3 fragmentSpecularColor = specularColor;
-    if (useSpecularMap) {
-        fragmentSpecularColor = texture(specularMap, TexCoord).xyz;
-    }
+    vec4 fragmentSpecularColor = texture(material.texture_specular0, TexCoord);
     
-    vec3 result = calcDirLight(dirLight, norm, viewDir, fragmentDiffuseColor, fragmentSpecularColor);
+    vec4 result = calcDirLight(dirLight, norm, viewDir, fragmentDiffuseColor, fragmentSpecularColor);
     for (int i = 0; i < pointLightsCount; i++) {
         result += calcPointLight(pointLights[i], norm, viewDir, fragmentDiffuseColor, fragmentSpecularColor);
     }
     for (int i = 0; i < spotLightsCount; i++) {
         result += calcSpotlight(spotLights[i], norm, viewDir, fragmentDiffuseColor, fragmentSpecularColor);
     }
-    FragColor = vec4(result, 1.0);
+    FragColor = result;
 }

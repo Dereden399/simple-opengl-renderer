@@ -13,14 +13,14 @@
 
 #include "Shader.hpp"
 #include "Objects/Mesh.hpp"
-#include "Objects/Object.hpp"
+#include "Objects/Model.hpp"
 #include "Camera.hpp"
 #include "Lights.hpp"
+#include "Objects/Node.hpp"
 
 class Renderer {
     unsigned int _VAO, _VBO, _EBO, _LightsUBO;
-    bool _initialised;
-    std::vector<Mesh*> _meshes;
+    bool _initialized;
 public:
     Renderer();
     ~Renderer();
@@ -31,9 +31,10 @@ public:
     Renderer(Renderer&& r);
     Renderer& operator=(Renderer&& r);
     
-    void initialise();
-    void addStaticMesh(Mesh* mesh);
-    void drawObjects(Shader* shader, std::vector<Object*>& objects, Camera* camera);
+    void initialize(std::vector<Mesh*> meshes);
+    bool isInitialized() {return _initialized;};
+    void drawModels(Shader* shader, std::vector<Model*>& models, Camera* camera);
+    void drawNode(Node* node, Camera* camera);
     void setLightsUBO(std::vector<Light*>& lights, Camera* camera);
 };
 
