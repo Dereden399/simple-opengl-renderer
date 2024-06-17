@@ -63,3 +63,10 @@ void Rotatable::updateBasis() {
     _up = rot*glm::vec3(0.0f,1.0f, 0.0f);
     _right = rot*glm::vec3(1.0f,0.0f,0.0f);
 };
+
+glm::mat4 Transform::getModelMatrix() {
+    glm::mat4 result = glm::translate(glm::mat4(1.0f), this->position);
+    result = glm::scale(result, this->scale);
+    return result*getRotationMatrix();
+    
+}

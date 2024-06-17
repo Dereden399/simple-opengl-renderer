@@ -61,4 +61,10 @@ public:
     Scalable(glm::vec3 scale_): scale(scale_) {};
 };
 
+class Transform: public Movable, public Rotatable, public Scalable {
+public:
+    Transform(glm::vec3 pos_ = glm::vec3(0.0f), glm::vec3 rot_ = glm::vec3(0.0f), glm::vec3 scale_ = glm::vec3(1.0f)): Movable(pos_), Rotatable(rot_), Scalable(scale_) {};
+    glm::mat4 getModelMatrix();
+};
+
 #endif /* Utils_hpp */

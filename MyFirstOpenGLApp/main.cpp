@@ -60,30 +60,31 @@ int main()
     
     box.position = glm::vec3(2.0f, 0.0f, 0.0f);
     floor.position = glm::vec3(0.0, -1.0f, 0.0f);
-    container.position = glm::vec3(-2.0f, 0.0f, 0.0f);
+    container.position = glm::vec3(-3.0f, 0.0f, 0.0f);
     
     floor.scale = glm::vec3(10.0f, 0.1f, 10.0f);
     
     Node scene = Node();
-    scene.children.push_back(&box);
-    scene.children.push_back(&floor);
-    scene.children.push_back(&container);
+    scene.addChild(&box);
+    scene.addChild(&floor);
+    //scene.addChild(&container);
+    box.addChild(&container);
     
-    DirectionalLight light = DirectionalLight(glm::vec3(1.0f,1.0f,1.0f), glm::normalize(glm::vec3(0.0f, 2.0f, 1.0f)), 0.4f, 0.1f);
+    DirectionalLight light = DirectionalLight(glm::vec3(1.0f,1.0f,1.0f), glm::normalize(glm::vec3(0.0f, 2.0f, 1.0f)), 0.2f, 0.5f);
     
-    scene.children.push_back(&light);
+    //scene.addChild(&light);
     
-    PointLight pointLight = PointLight(glm::vec3(0.8f,1.0f,1.0f), glm::vec3(0.0f,-0.5f,-1.0f), 1.0f, 0.2f, 1.0f, 0.2f, 0.15f);
-    PointLight pointLight2 = PointLight(glm::vec3(0.0f,1.0f,1.0f), glm::vec3(0.0f,-0.5f,-1.0f), 1.0f, 0.2f, 1.0f, 0.2f, 0.15f);
-    PointLight pointLight3 = PointLight(glm::vec3(1.0f,0.0f,1.0f), glm::vec3(3.0f,-0.5f,-1.0f), 1.0f, 0.2f, 1.0f, 0.2f, 0.15f);
+    PointLight pointLight = PointLight(glm::vec3(1.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,0.0f), 2.0f, 0.1f, 1.0f, 0.14f, 0.07f);
+    PointLight pointLight2 = PointLight(glm::vec3(0.0f,1.0f,0.0f), glm::vec3(0.0f,0.0f,0.0f), 2.0f, 0.1f, 1.0f, 0.14f, 0.07f);
+    PointLight pointLight3 = PointLight(glm::vec3(0.0f,0.0f,1.0f), glm::vec3(0.0f,0.0f,0.0f), 2.0f, 0.1f, 1.0f, 0.14f, 0.07f);
     
-    scene.children.push_back(&pointLight);
-    scene.children.push_back(&pointLight2);
-    scene.children.push_back(&pointLight3);
+    scene.addChild(&pointLight);
+    scene.addChild(&pointLight2);
+    scene.addChild(&pointLight3);
     
-    SpotLight spotlight = SpotLight(glm::vec3(1.0f,1.0f,1.0f), glm::vec3(0.0f,0.0f,3.0f), glm::normalize(glm::vec3(0.0f, 2.0f, 1.0f)), 1.0f, 0.1f, 0.97f, 0.96f);
+    SpotLight spotlight = SpotLight(glm::vec3(1.0f,1.0f,1.0f), glm::vec3(1.0f,0.0f,0.0f), glm::normalize(glm::vec3(2.0f, -1.0f, 0.0f)), 1.0f, 0.1f, 0.96f, 0.94f);
     
-    //scene.children.push_back(&spotlight);
+    //box.addChild(&spotlight);
     
     Camera camera = Camera(glm::vec3(0.0f,0.0f,-3.0f), glm::vec3(0.0f,1.0f,0.0f));
     program.selectedCamera = &camera;
@@ -93,14 +94,19 @@ int main()
     // render loop
     while(!program.shouldWindowClose()) {
         auto [time, delta] = program.startRenderLoop();
-        box.rotate({delta*30, delta*30, 0});
+        box.rotate({0, delta*30, 0});
         box.position.y = sin(time)/4 + 1;
         
-        pointLight.info.pos.x = sin(time*2)*4;
+        container.rotate({delta*30, delta*30, 0});
+        
+        pointLight.info.pos.y = sin(time*2)*3;
         pointLight.info.pos.z = cos(time*2)*3;
         
-        spotlight.info.pos = camera.position;
-        spotlight.info.direction = camera.getBasisForward();
+        pointLight2.info.pos.x = sin(time*2+1)*3;
+        pointLight2.info.pos.y = cos(time*2+1)*3;
+        
+        pointLight3.info.pos.z = sin(time*2+2)*3;
+        pointLight3.info.pos.x = cos(time*2+2)*3;
         
         program.endRenderLoop();
     }

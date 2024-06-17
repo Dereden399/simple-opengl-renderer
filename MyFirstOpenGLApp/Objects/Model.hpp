@@ -17,7 +17,7 @@
 #include "Material.hpp"
 #include "../Shader.hpp"
 
-class Model : public Node, public Movable, public Rotatable, public Scalable {
+class Model : public Node {
     struct MeshMaterialPair {
         Mesh* mesh;
         Material* material;
@@ -26,10 +26,8 @@ public:
     Shader* shader;
     std::vector<MeshMaterialPair> meshes;
     
-    Model(std::vector<MeshMaterialPair> meshes_, glm::vec3 pos_ = glm::vec3(0.0f)): meshes(meshes_), shader(nullptr), Movable(pos_), Node() {};
-    Model(Mesh* mesh, Material* material, glm::vec3 pos_ = glm::vec3(0.0f)): meshes({{mesh, material}}), shader(nullptr), Movable(pos_), Node() {};
-    
-    glm::mat4 getModelMatrix();
+    Model(std::vector<MeshMaterialPair> meshes_, glm::vec3 pos_ = glm::vec3(0.0f)): meshes(meshes_), shader(nullptr), Node() {position = pos_;};
+    Model(Mesh* mesh, Material* material, glm::vec3 pos_ = glm::vec3(0.0f)): meshes({{mesh, material}}), shader(nullptr), Node() {position = pos_;};
     
     Node::NodeType getNodeType() override {return Node::NodeType::Model;};
 };

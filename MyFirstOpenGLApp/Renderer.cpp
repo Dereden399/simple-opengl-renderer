@@ -9,7 +9,6 @@
 #include <iostream>
 #include "Renderer.hpp"
 #include <glm/gtc/type_ptr.hpp>
-#include <unordered_map>
 
 Renderer::Renderer() {
     _initialized = false;
@@ -127,6 +126,7 @@ void Renderer::setLightsUBO(std::vector<Light*>& lights, Camera* camera) {
                 if (pointLightsCount >= 50) break;
                 auto pointLight = static_cast<PointLight*>(light);
                 auto d = (pointLight->info);
+                d.pos = glm::vec3(pointLight->toParentTransform*glm::vec4(d.pos,1.0f));
                 glBufferSubData(GL_UNIFORM_BUFFER, pointLightsOffset + pointLightsCount*48, sizeof(d), &d);
                 pointLightsCount++;
                 break;
@@ -136,6 +136,8 @@ void Renderer::setLightsUBO(std::vector<Light*>& lights, Camera* camera) {
                 if (spotLightsCount >= 50) break;
                 auto spotLight = static_cast<SpotLight*>(light);
                 auto d = (spotLight->info);
+                d.pos = glm::vec3(spotLight->toParentTransform*glm::vec4(d.pos,1.0f));
+                d.direction = glm::vec3(spotLight->toParentTransform*glm::vec4(d.direction,0.0f));
                 glBufferSubData(GL_UNIFORM_BUFFER, spotLightsOffset + spotLightsCount*64, sizeof(d), &d);
                 spotLightsCount++;
                 break;
@@ -151,9 +153,8 @@ void Renderer::setLightsUBO(std::vector<Light*>& lights, Camera* camera) {
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 };
 
-void Renderer::drawNode(Node* node, Camera* camera) {
-    std::unordered_map<Shader*, std::vector<Model*>> models;
-    std::vector<Light*> lights;
+void Renderer::traverseNode(Node* node, std::unordered_map<Shader*, std::vector<Model*>>& models, std::vector<Light*>& lights) {
+    node->toParentTransform = node->parentNode != nullptr ? node->parentNode->toParentTransform*node->parentNode->getModelMatrix() : glm::mat4(1.0f);
     for (const auto& n : node->children) {
         switch (n->getNodeType()) {
             case Node::NodeType::Model: {
@@ -169,7 +170,14 @@ void Renderer::drawNode(Node* node, Camera* camera) {
             default:
                 break;
         }
+        traverseNode(n, models, lights);
     }
+};
+
+void Renderer::drawNode(Node* node, Camera* camera) {
+    std::unordered_map<Shader*, std::vector<Model*>> models;
+    std::vector<Light*> lights;
+    traverseNode(node, models, lights);
     glBindVertexArray(_VAO);
     setLightsUBO(lights, camera);
     for (auto& [key, value] : models) {
@@ -183,7 +191,7 @@ void Renderer::drawModels(Shader* shader, std::vector<Model*>& models, Camera* c
     shader->setUniform("projectionView", projViewMatrix);
     
     for (auto& model : models) {
-        auto modelMatrix = model->getModelMatrix();
+        auto modelMatrix = model->toParentTransform*model->getModelMatrix();
         shader->setUniform("model", modelMatrix);
         auto normalsModel = glm::transpose(glm::inverse(modelMatrix));
         shader->setUniform("normalsModel", normalsModel);

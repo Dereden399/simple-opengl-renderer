@@ -10,6 +10,7 @@
 
 #include <glad/glad.h>
 #include <vector>
+#include <unordered_map>
 
 #include "Shader.hpp"
 #include "Objects/Mesh.hpp"
@@ -21,6 +22,9 @@
 class Renderer {
     unsigned int _VAO, _VBO, _EBO, _LightsUBO;
     bool _initialized;
+    
+    void traverseNode(Node* node, std::unordered_map<Shader*, std::vector<Model*>>& models, std::vector<Light*>& lights);
+    
 public:
     Renderer();
     ~Renderer();

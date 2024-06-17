@@ -61,7 +61,7 @@ int Program::initialise() {
 };
 
 std::pair<float, float> Program::startRenderLoop() {
-    glClearColor(0.35f, 0.05f, 0.05f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     float curFrame = glfwGetTime();
     _deltaTime = curFrame - _lastFrame;
