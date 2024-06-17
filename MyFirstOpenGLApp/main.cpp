@@ -69,9 +69,9 @@ int main()
     scene.children.push_back(&floor);
     scene.children.push_back(&container);
     
-    DirectionalLight light = DirectionalLight(glm::vec3(1.0f,1.0f,1.0f), glm::normalize(glm::vec3(0.0f, 2.0f, 1.0f)), 1.0f, 0.1f);
+    DirectionalLight light = DirectionalLight(glm::vec3(1.0f,1.0f,1.0f), glm::normalize(glm::vec3(0.0f, 2.0f, 1.0f)), 0.4f, 0.1f);
     
-    //scene.children.push_back(&light);
+    scene.children.push_back(&light);
     
     PointLight pointLight = PointLight(glm::vec3(0.8f,1.0f,1.0f), glm::vec3(0.0f,-0.5f,-1.0f), 1.0f, 0.2f, 1.0f, 0.2f, 0.15f);
     PointLight pointLight2 = PointLight(glm::vec3(0.0f,1.0f,1.0f), glm::vec3(0.0f,-0.5f,-1.0f), 1.0f, 0.2f, 1.0f, 0.2f, 0.15f);

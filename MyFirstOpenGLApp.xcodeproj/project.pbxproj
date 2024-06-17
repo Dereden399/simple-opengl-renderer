@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		922A52F62C1EE1E500AB9C78 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 922A52F42C1EE1E500AB9C78 /* ResourcesManager.cpp */; };
 		922A52F92C1F031500AB9C78 /* Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 922A52F72C1F031500AB9C78 /* Model.cpp */; };
-		922A52FF2C2035D600AB9C78 /* defaultTexture.png in Copy Assets */ = {isa = PBXBuildFile; fileRef = 922A52FE2C2035C800AB9C78 /* defaultTexture.png */; };
+		922A52FF2C2035D600AB9C78 /* defaultDiffuse.png in Copy Assets */ = {isa = PBXBuildFile; fileRef = 922A52FE2C2035C800AB9C78 /* defaultDiffuse.png */; };
+		922A53012C20B39600AB9C78 /* defaultSpecular.png in Copy Assets */ = {isa = PBXBuildFile; fileRef = 922A53002C20B37C00AB9C78 /* defaultSpecular.png */; };
 		922A5C6A2C1DA80500099BC4 /* libassimp.5.4.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 922A5C692C1DA80500099BC4 /* libassimp.5.4.1.dylib */; };
 		9236E5072C0FA68000423CAD /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9236E5062C0FA68000423CAD /* Shader.cpp */; };
 		9236E5112C10A32700423CAD /* vertexShader.glsl in Copy Shaders */ = {isa = PBXBuildFile; fileRef = 9236E50F2C10A2D600423CAD /* vertexShader.glsl */; };
@@ -37,7 +38,8 @@
 			dstPath = Assets;
 			dstSubfolderSpec = 16;
 			files = (
-				922A52FF2C2035D600AB9C78 /* defaultTexture.png in Copy Assets */,
+				922A53012C20B39600AB9C78 /* defaultSpecular.png in Copy Assets */,
+				922A52FF2C2035D600AB9C78 /* defaultDiffuse.png in Copy Assets */,
 				9236E5182C10E24600423CAD /* container.jpg in Copy Assets */,
 				92EC0BE62C1D8A4A001A3637 /* container2_specular.png in Copy Assets */,
 				92EC0BE72C1D8A4D001A3637 /* container2.png in Copy Assets */,
@@ -65,7 +67,8 @@
 		922A52F72C1F031500AB9C78 /* Model.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Model.cpp; sourceTree = "<group>"; };
 		922A52F82C1F031500AB9C78 /* Model.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Model.hpp; sourceTree = "<group>"; };
 		922A52FB2C1F04F100AB9C78 /* Node.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Node.hpp; sourceTree = "<group>"; };
-		922A52FE2C2035C800AB9C78 /* defaultTexture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = defaultTexture.png; sourceTree = "<group>"; };
+		922A52FE2C2035C800AB9C78 /* defaultDiffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = defaultDiffuse.png; sourceTree = "<group>"; };
+		922A53002C20B37C00AB9C78 /* defaultSpecular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = defaultSpecular.png; sourceTree = "<group>"; };
 		922A5C692C1DA80500099BC4 /* libassimp.5.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.5.4.1.dylib; path = ../../../../../../opt/homebrew/Cellar/assimp/5.4.1/lib/libassimp.5.4.1.dylib; sourceTree = "<group>"; };
 		9236E5052C0FA59100423CAD /* Shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shader.hpp; sourceTree = "<group>"; };
 		9236E5062C0FA68000423CAD /* Shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
@@ -125,7 +128,8 @@
 		9236E5152C10DCCD00423CAD /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				922A52FE2C2035C800AB9C78 /* defaultTexture.png */,
+				922A53002C20B37C00AB9C78 /* defaultSpecular.png */,
+				922A52FE2C2035C800AB9C78 /* defaultDiffuse.png */,
 				92EC0BE52C1D8A2D001A3637 /* container2_specular.png */,
 				92EC0BE42C1D8A27001A3637 /* container2.png */,
 				9236E5162C10DCE000423CAD /* container.jpg */,

@@ -52,6 +52,10 @@ int Program::initialise() {
         if (progPtr) {}
     });
     glEnable(GL_DEPTH_TEST);
+    
+    // loading default textures
+    resourcesManager.initialize();
+    
     _initialized = true;
     return 0;
 };

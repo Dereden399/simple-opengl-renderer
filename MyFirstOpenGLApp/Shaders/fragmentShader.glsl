@@ -118,5 +118,5 @@ void main()
     for (int i = 0; i < spotLightsCount; i++) {
         result += calcSpotlight(spotLights[i], norm, viewDir, fragmentDiffuseColor, fragmentSpecularColor);
     }
-    FragColor = result;
+    FragColor = result*material.blendColor;
 }

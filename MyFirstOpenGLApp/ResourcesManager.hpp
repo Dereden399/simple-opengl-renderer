@@ -21,22 +21,20 @@ public:
     std::vector<Shader*> shaders;
     std::vector<Material*> materials;
     
-    ResourcesManager() {
-        meshes = std::vector<Mesh*>();
-        textures = std::vector<Texture*>();
-        materials = std::vector<Material*>();
-        shaders = std::vector<Shader*>();
-        _meshesLastIndex = 0;
-    };
+    ResourcesManager();
     ~ResourcesManager();
     
     void setRenderer(Renderer* renderer) {_renderer = renderer;};
+    void initialize();
     void loadMesh(Mesh* mesh);
     Texture* loadTexture(std::string name, std::string path, GLint internalformat, GLenum format, bool flip = false);
     Shader* loadShader(const char* vertexPath, const char* fragmentPath);
     Material* loadMaterial(std::string name_, float shininess_, std::vector<Texture*>& textures_, glm::vec3 blendColor_ = glm::vec3(1.0f));
+    Material* loadMaterial(std::string name_, float shininess_, glm::vec3 blendColor_);
 private:
     Renderer* _renderer;
+    Texture* _defaultDiffuse;
+    Texture* _defaultSpecular;
     unsigned int _meshesLastIndex;
 };
 
