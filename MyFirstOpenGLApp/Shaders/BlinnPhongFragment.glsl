@@ -62,10 +62,10 @@ vec4 calcDiffuseColor(inout vec3 normal, vec3 lightDir, inout vec4 diffuseMateri
 }
 
 vec4 calcSpecularColor(inout vec4 specularMaterialColor, inout vec3 normal, vec3 lightDir, inout vec3 viewDir) {
-    vec3 reflectDir = reflect(lightDir, normal);
-    float kEnergyConservation = ( 2.0 + material.shininess ) / ( 2.0 * kPi );
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess)*kEnergyConservation;
-    return specularMaterialColor * spec;
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float kEnergyConservation = ( 8.0 + material.shininess ) / ( 8.0 * kPi );
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess)*kEnergyConservation;
+    return specularMaterialColor * spec*sign(max(dot(normal, -lightDir), 0.0));
 }
 
 vec4 calcPhongColor( vec3 lightColor, inout float ambientIntensity, inout vec3 normal, vec3 lightDir, inout vec3 viewDir, inout vec4 diffuseMaterialColor, inout vec4 specularMaterialColor) {

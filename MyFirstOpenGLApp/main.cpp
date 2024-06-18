@@ -33,6 +33,7 @@ int main()
     }
     
     Shader* uberShader = program.resourcesManager.loadShader("./Shaders/vertexShader.glsl", "./Shaders/fragmentShader.glsl");
+    Shader* blinnPhongUberShader = program.resourcesManager.loadShader("./Shaders/vertexShader.glsl", "./Shaders/BlinnPhongFragment.glsl");
     
     Texture* boxTexture = program.resourcesManager.loadTexture("texture_diffuse", "Assets/container.jpg", GL_RGB, GL_RGB);
     Texture* containerDiffuse = program.resourcesManager.loadTexture("texture_diffuse", "Assets/container2.png", GL_RGB, GL_RGBA);
@@ -42,7 +43,7 @@ int main()
     program.resourcesManager.loadMesh(cubeMesh);
     
     std::vector<Texture*> boxMaterialTextures = {boxTexture};
-    Material* boxMaterial = program.resourcesManager.loadMaterial("boxCrateMaterial", 64, boxMaterialTextures);
+    Material* boxMaterial = program.resourcesManager.loadMaterial("boxCrateMaterial", 16, boxMaterialTextures);
     
     std::vector<Texture*> containerMaterialTextures = {containerDiffuse, containerSpecularMap};
     Material* containerMaterial = program.resourcesManager.loadMaterial("containerMaterial", 64, containerMaterialTextures);
@@ -52,15 +53,15 @@ int main()
     Model box = Model(cubeMesh, boxMaterial);
     box.shader = uberShader;
 
-    Model container = Model(cubeMesh, containerMaterial);
-    container.shader = uberShader;
+    Model container = Model(cubeMesh, boxMaterial);
+    container.shader = blinnPhongUberShader;
     
-    Model floor = Model(cubeMesh, containerMaterial);
-    floor.shader = uberShader;
+    Model floor = Model(cubeMesh, boxMaterial);
+    floor.shader = blinnPhongUberShader;
     
     box.position = glm::vec3(2.0f, 0.0f, 0.0f);
     floor.position = glm::vec3(0.0, -1.0f, 0.0f);
-    container.position = glm::vec3(-3.0f, 0.0f, 0.0f);
+    container.position = glm::vec3(-2.0f, 1.0f, 0.0f);
     
     floor.scale = glm::vec3(10.0f, 0.1f, 10.0f);
     
@@ -68,19 +69,19 @@ int main()
     scene.addChild(&box);
     scene.addChild(&floor);
     //scene.addChild(&container);
-    box.addChild(&container);
+    scene.addChild(&container);
     
     DirectionalLight light = DirectionalLight(glm::vec3(1.0f,1.0f,1.0f), glm::normalize(glm::vec3(0.0f, 2.0f, 1.0f)), 0.2f, 0.5f);
     
     //scene.addChild(&light);
     
-    PointLight pointLight = PointLight(glm::vec3(1.0f,0.0f,0.0f), glm::vec3(0.0f,0.0f,0.0f), 2.0f, 0.1f, 1.0f, 0.14f, 0.07f);
+    PointLight pointLight = PointLight(glm::vec3(1.0f,1.0f,1.0f), glm::vec3(0.0f,0.0f,0.0f), 2.0f, 0.1f, 1.0f, 0.14f, 0.07f);
     PointLight pointLight2 = PointLight(glm::vec3(0.0f,1.0f,0.0f), glm::vec3(0.0f,0.0f,0.0f), 2.0f, 0.1f, 1.0f, 0.14f, 0.07f);
     PointLight pointLight3 = PointLight(glm::vec3(0.0f,0.0f,1.0f), glm::vec3(0.0f,0.0f,0.0f), 2.0f, 0.1f, 1.0f, 0.14f, 0.07f);
     
     scene.addChild(&pointLight);
-    scene.addChild(&pointLight2);
-    scene.addChild(&pointLight3);
+    //scene.addChild(&pointLight2);
+    //scene.addChild(&pointLight3);
     
     SpotLight spotlight = SpotLight(glm::vec3(1.0f,1.0f,1.0f), glm::vec3(1.0f,0.0f,0.0f), glm::normalize(glm::vec3(2.0f, -1.0f, 0.0f)), 1.0f, 0.1f, 0.96f, 0.94f);
     
@@ -94,13 +95,13 @@ int main()
     // render loop
     while(!program.shouldWindowClose()) {
         auto [time, delta] = program.startRenderLoop();
-        box.rotate({0, delta*30, 0});
-        box.position.y = sin(time)/4 + 1;
+        box.rotate({delta*30, delta*30, 0});
+        //box.position.y = sin(time)/4 + 1;
         
         container.rotate({delta*30, delta*30, 0});
         
         pointLight.info.pos.y = sin(time*2)*3;
-        pointLight.info.pos.z = cos(time*2)*3;
+        //pointLight.info.pos.z = cos(time*2)*3;
         
         pointLight2.info.pos.x = sin(time*2+1)*3;
         pointLight2.info.pos.y = cos(time*2+1)*3;

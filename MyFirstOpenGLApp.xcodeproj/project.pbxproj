@@ -10,6 +10,7 @@
 		922A52F62C1EE1E500AB9C78 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 922A52F42C1EE1E500AB9C78 /* ResourcesManager.cpp */; };
 		922A52FF2C2035D600AB9C78 /* defaultDiffuse.png in Copy Assets */ = {isa = PBXBuildFile; fileRef = 922A52FE2C2035C800AB9C78 /* defaultDiffuse.png */; };
 		922A53012C20B39600AB9C78 /* defaultSpecular.png in Copy Assets */ = {isa = PBXBuildFile; fileRef = 922A53002C20B37C00AB9C78 /* defaultSpecular.png */; };
+		922A53032C217A4900AB9C78 /* BlinnPhongFragment.glsl in Copy Shaders */ = {isa = PBXBuildFile; fileRef = 922A53022C217A1B00AB9C78 /* BlinnPhongFragment.glsl */; };
 		922A5C6A2C1DA80500099BC4 /* libassimp.5.4.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 922A5C692C1DA80500099BC4 /* libassimp.5.4.1.dylib */; };
 		9236E5072C0FA68000423CAD /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9236E5062C0FA68000423CAD /* Shader.cpp */; };
 		9236E5112C10A32700423CAD /* vertexShader.glsl in Copy Shaders */ = {isa = PBXBuildFile; fileRef = 9236E50F2C10A2D600423CAD /* vertexShader.glsl */; };
@@ -54,6 +55,7 @@
 			files = (
 				9236E5122C10A32F00423CAD /* fragmentShader.glsl in Copy Shaders */,
 				9236E5112C10A32700423CAD /* vertexShader.glsl in Copy Shaders */,
+				922A53032C217A4900AB9C78 /* BlinnPhongFragment.glsl in Copy Shaders */,
 			);
 			name = "Copy Shaders";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -67,6 +69,7 @@
 		922A52FB2C1F04F100AB9C78 /* Node.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Node.hpp; sourceTree = "<group>"; };
 		922A52FE2C2035C800AB9C78 /* defaultDiffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = defaultDiffuse.png; sourceTree = "<group>"; };
 		922A53002C20B37C00AB9C78 /* defaultSpecular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = defaultSpecular.png; sourceTree = "<group>"; };
+		922A53022C217A1B00AB9C78 /* BlinnPhongFragment.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = BlinnPhongFragment.glsl; sourceTree = "<group>"; };
 		922A5C692C1DA80500099BC4 /* libassimp.5.4.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.5.4.1.dylib; path = ../../../../../../opt/homebrew/Cellar/assimp/5.4.1/lib/libassimp.5.4.1.dylib; sourceTree = "<group>"; };
 		9236E5052C0FA59100423CAD /* Shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shader.hpp; sourceTree = "<group>"; };
 		9236E5062C0FA68000423CAD /* Shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
@@ -119,6 +122,7 @@
 			children = (
 				9236E50F2C10A2D600423CAD /* vertexShader.glsl */,
 				9236E5102C10A2F600423CAD /* fragmentShader.glsl */,
+				922A53022C217A1B00AB9C78 /* BlinnPhongFragment.glsl */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";
