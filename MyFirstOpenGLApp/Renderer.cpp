@@ -58,6 +58,10 @@ void Renderer::initialize(std::vector<Mesh*> meshes) {
     glVertexAttribPointer(1,3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, norm));
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2,2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, text));
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3,3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4,3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
@@ -195,6 +199,7 @@ void Renderer::drawModels(Shader* shader, std::vector<Model*>& models, Camera* c
         shader->setUniform("model", modelMatrix);
         auto normalsModel = glm::transpose(glm::inverse(modelMatrix));
         shader->setUniform("normalsModel", normalsModel);
+        bool useNormalMap = false;
         
         for (const auto& pair : model->meshes) {
             auto& material = pair.material;
@@ -211,8 +216,15 @@ void Renderer::drawModels(Shader* shader, std::vector<Model*>& models, Camera* c
                     number = std::to_string(diffNum++);
                 else if(type == "texture_specular")
                     number = std::to_string(specNum++);
-                shader->setUniform(("material." + type + number).c_str(), {i});
+                if (type != "texture_normal") {
+                    shader->setUniform(("material." + type + number).c_str(), {i});
+                } else {
+                    shader->setUniform("material.normalMap", {i});
+                    useNormalMap = true;
+                }
+
             }
+            shader->setUniform("material.useNormalMap", {useNormalMap});
             shader->setUniform("material.blendColor", {material->blendColor.x,material->blendColor.y,material->blendColor.z, 1.0f});
             //std::cout << glGetError() << std::endl;
             glDrawElements(GL_TRIANGLES, mesh->size, GL_UNSIGNED_INT, (void*)(size_t)(mesh->globalStartIndex));

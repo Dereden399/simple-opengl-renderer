@@ -14,8 +14,10 @@ struct Vertex {
     glm::vec3 pos;
     glm::vec3 norm;
     glm::vec2 text;
+    glm::vec3 tangent = glm::vec3(0.0f);
+    glm::vec3 bitangent = glm::vec3(0.0f);
     
-    Vertex(glm::vec3 pos_, glm::vec3 norm_ = glm::vec3(0.0f), glm::vec2 text_ = glm::vec2(0.0f)): pos(pos_), norm(norm_), text(text_) {};
+    Vertex(glm::vec3 pos_, glm::vec3 norm_ = glm::vec3(0.0f), glm::vec2 text_ = glm::vec2(0.0f), glm::vec3 tangent_ = glm::vec3(0.0f), glm::vec3 bitangent_ = glm::vec3(0.0f)): pos(pos_), norm(norm_), text(text_), tangent(tangent_), bitangent(bitangent_) {};
     Vertex(glm::vec3 pos_, glm::vec2 text_ = glm::vec2(0.0f), glm::vec3 norm_ = glm::vec3(0.0f)): pos(pos_), norm(norm_), text(text_) {};
 };
 

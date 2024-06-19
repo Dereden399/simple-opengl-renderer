@@ -47,6 +47,8 @@ in vec3 FragPos;
 struct Material {
     sampler2D texture_diffuse0;
     sampler2D texture_specular0;
+    sampler2D normalMap;
+    bool useNormalMap;
     vec4 blendColor;
     float shininess;
 };
@@ -122,4 +124,6 @@ void main()
         result += calcSpotlight(spotLights[i], norm, viewDir, fragmentDiffuseColor, fragmentSpecularColor);
     }
     FragColor = result*material.blendColor;
+    float gamma = 2.2;
+    FragColor.rgb = pow(FragColor.rgb, vec3(1.0/gamma));
 }

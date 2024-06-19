@@ -43,10 +43,13 @@ out vec4 FragColor;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
+in mat3 TBN;
 
 struct Material {
     sampler2D texture_diffuse0;
     sampler2D texture_specular0;
+    sampler2D normalMap;
+    bool useNormalMap;
     vec4 blendColor;
     float shininess;
 };
@@ -108,11 +111,17 @@ vec4 calcSpotlight(Spotlight light, inout vec3 normal, inout vec3 viewDir, inout
 void main()
 {
     vec3 norm = Normal;
+    if (material.useNormalMap) {
+        norm = texture(material.normalMap, TexCoord).rgb;
+        norm = normalize(norm*2.0-1.0);
+        norm = TBN*norm;
+    }
     vec3 viewDir = normalize(viewerPos - FragPos);
     
     vec4 fragmentDiffuseColor = texture(material.texture_diffuse0, TexCoord);
     
     vec4 fragmentSpecularColor = texture(material.texture_specular0, TexCoord);
+    
     
     vec4 result = calcDirLight(dirLight, norm, viewDir, fragmentDiffuseColor, fragmentSpecularColor);
     for (int i = 0; i < pointLightsCount; i++) {
@@ -122,4 +131,6 @@ void main()
         result += calcSpotlight(spotLights[i], norm, viewDir, fragmentDiffuseColor, fragmentSpecularColor);
     }
     FragColor = result*material.blendColor;
+    float gamma = 2.2;
+    FragColor.rgb = pow(FragColor.rgb, vec3(1.0/gamma));;
 }
