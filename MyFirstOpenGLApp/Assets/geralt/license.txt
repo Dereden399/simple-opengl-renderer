@@ -1,0 +1,11 @@
+Model Information:
+* title:	Witcher 3-Geralt
+* source:	https://sketchfab.com/3d-models/witcher-3-geralt-8f62c76580144ed2a8c648dd5046d8d9
+* author:	biswayan (https://sketchfab.com/biswayan)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Witcher 3-Geralt" (https://sketchfab.com/3d-models/witcher-3-geralt-8f62c76580144ed2a8c648dd5046d8d9) by biswayan (https://sketchfab.com/biswayan) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
