@@ -13,11 +13,12 @@ out mat3 TBN;
 uniform mat4 projectionView;
 uniform mat4 model;
 uniform mat4 normalsModel;
+uniform float textureScale;
 
 void main()
 {
     gl_Position = projectionView * model * vec4(aPos, 1.0);
-    TexCoord = aTexCoord;
+    TexCoord = aTexCoord*textureScale;
     FragPos = vec3(model*vec4(aPos,1.0));
     Normal = normalize((normalsModel*vec4(aNorm, 0.0)).xyz);
     vec3 T = normalize(vec3(normalsModel * vec4(aTangent,   0.0)));

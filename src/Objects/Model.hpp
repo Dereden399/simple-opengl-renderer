@@ -25,10 +25,12 @@ class Model : public Node {
   };
   Shader* shader;
   std::vector<MeshMaterialPair> meshes;
+  bool tileTextures;
 
   Model(std::vector<MeshMaterialPair> meshes_, glm::vec3 pos_ = glm::vec3(0.0f))
       : meshes(meshes_), shader(nullptr), Node() {
     position = pos_;
+    tileTextures = false;
   };
   Model(Mesh* mesh, Material* material, glm::vec3 pos_ = glm::vec3(0.0f))
       : meshes({{mesh, material}}), shader(nullptr), Node() {

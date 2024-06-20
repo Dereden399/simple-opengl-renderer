@@ -14,6 +14,7 @@ Camera::Camera(glm::vec3 pos_, glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f))
     : Movable(pos_), Rotatable() {
   _worldUp = worldUp;
   _fov = 45;
+  setAspectRatio(800.0f / 600.0f);
   updateBasis();
 };
 
@@ -23,7 +24,7 @@ glm::mat4 Camera::getViewMatrix() {
 
 glm::mat4 Camera::getProjectionMatrix() {
   glm::mat4 projection =
-      glm::perspective(glm::radians(_fov), 800.0f / 600.0f, 0.1f, 100.0f);
+      glm::perspective(glm::radians(_fov), _aspectRatio, 0.1f, 100.0f);
   return projection;
 };
 

@@ -216,7 +216,10 @@ void Renderer::drawModels(Shader* shader, std::vector<Model*>& models,
     shader->setUniform("model", modelMatrix);
     auto normalsModel = glm::transpose(glm::inverse(modelMatrix));
     shader->setUniform("normalsModel", normalsModel);
+    shader->setUniform("textureScale",
+                       {model->tileTextures ? model->scale.x : 1.0f});
     bool useNormalMap = false;
+    bool useEmissionMap = false;
 
     for (const auto& pair : model->meshes) {
       auto& material = pair.material;
@@ -226,6 +229,7 @@ void Renderer::drawModels(Shader* shader, std::vector<Model*>& models,
       int diffNum = 0;
       int specNum = 0;
       int normNum = 0;
+      int emitNum = 0;
       for (int i = 0; i < material->textures.size(); i++) {
         material->textures[i]->bind(GL_TEXTURE0 + i);
         std::string type = material->textures[i]->type;
@@ -237,10 +241,14 @@ void Renderer::drawModels(Shader* shader, std::vector<Model*>& models,
         else if (type == "texture_normal") {
           number = std::to_string(normNum++);
           useNormalMap = true;
+        } else if (type == "texture_emission") {
+          number = std::to_string(emitNum++);
+          useEmissionMap = true;
         }
         shader->setUniform(("material." + type + number).c_str(), {i});
       }
       shader->setUniform("material.useNormalMap", {useNormalMap});
+      shader->setUniform("material.useEmissionMap", {useEmissionMap});
       shader->setUniform("material.blendColor",
                          {material->blendColor.x, material->blendColor.y,
                           material->blendColor.z, 1.0f});

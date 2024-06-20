@@ -49,7 +49,9 @@ struct Material {
     sampler2D texture_diffuse0;
     sampler2D texture_specular0;
     sampler2D texture_normal0;
+    sampler2D texture_emission0;
     bool useNormalMap;
+    bool useEmissionMap;
     vec4 blendColor;
     float shininess;
 };
@@ -131,6 +133,7 @@ void main()
         result.rgb += calcSpotlight(spotLights[i], norm, viewDir, fragmentDiffuseColor, fragmentSpecularColor);
     }
     FragColor = result*material.blendColor;
+    FragColor.rgb += texture(material.texture_emission0, TexCoord).rgb*int(material.useEmissionMap);
     float gamma = 2.2;
     FragColor.rgb = pow(FragColor.rgb, vec3(1.0/gamma));;
 }

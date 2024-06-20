@@ -24,6 +24,7 @@ void Program::_framebuffer_size_callback(GLFWwindow* window, int width,
                                          int height) {
   glViewport(0, 0, width, height);
   if (selectedCamera != nullptr) {
+    selectedCamera->setAspectRatio((float)width / height);
   }
 };
 
