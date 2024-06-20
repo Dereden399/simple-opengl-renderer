@@ -52,7 +52,9 @@ int Program::initialise() {
         if (progPtr) {}
     });
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_FRAMEBUFFER_SRGB); 
+    //glEnable(GL_FRAMEBUFFER_SRGB);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
     
     // loading default textures
     resourcesManager.initialize();

@@ -31,7 +31,7 @@ void Renderer::initialize(std::vector<Mesh*> meshes) {
     for (const auto& mesh : meshes) {
         finalVertices.insert(finalVertices.end(), mesh->vertices.begin(), mesh->vertices.end());
         for (int i = 0; i < mesh->size; i++) {
-            finalIndices.push_back(mesh->localIndices[i] + mesh->globalStartIndex);
+            finalIndices.push_back(mesh->localIndices[i] + mesh->indicesStartIndex);
         }
     }
     
@@ -208,6 +208,7 @@ void Renderer::drawModels(Shader* shader, std::vector<Model*>& models, Camera* c
             shader->setUniform("material.shininess", {material->shininess});
             int diffNum = 0;
             int specNum = 0;
+            int normNum = 0;
             for (int i = 0; i < material->textures.size(); i++) {
                 material->textures[i]->bind(GL_TEXTURE0 + i);
                 std::string type = material->textures[i]->type;
@@ -216,18 +217,17 @@ void Renderer::drawModels(Shader* shader, std::vector<Model*>& models, Camera* c
                     number = std::to_string(diffNum++);
                 else if(type == "texture_specular")
                     number = std::to_string(specNum++);
-                if (type != "texture_normal") {
-                    shader->setUniform(("material." + type + number).c_str(), {i});
-                } else {
-                    shader->setUniform("material.normalMap", {i});
+                else if(type == "texture_normal") {
+                    number = std::to_string(normNum++);
                     useNormalMap = true;
                 }
+                shader->setUniform(("material." + type + number).c_str(), {i});
 
             }
             shader->setUniform("material.useNormalMap", {useNormalMap});
             shader->setUniform("material.blendColor", {material->blendColor.x,material->blendColor.y,material->blendColor.z, 1.0f});
             //std::cout << glGetError() << std::endl;
-            glDrawElements(GL_TRIANGLES, mesh->size, GL_UNSIGNED_INT, (void*)(size_t)(mesh->globalStartIndex));
+            glDrawElements(GL_TRIANGLES, mesh->size, GL_UNSIGNED_INT, (void*)(mesh->globalStartIndex*sizeof(unsigned int)));
             //std::cout << glGetError() << std::endl;
         }
     }

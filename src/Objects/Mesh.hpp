@@ -18,11 +18,13 @@ public:
     std::vector<unsigned int> localIndices;
     std::string name;
     unsigned int size;
-    unsigned int globalStartIndex;
+    size_t globalStartIndex;
+    size_t indicesStartIndex;
     
     Mesh(std::vector<Vertex> vertices_, std::vector<unsigned int> localIndices_, std::string name_)
     : vertices(vertices_), localIndices(localIndices_), name(name_) {
         globalStartIndex = 0;
+        indicesStartIndex = 0;
         size = (unsigned int)localIndices_.size();
     };
     bool operator==(const Mesh& second) {return this->name == second.name;};

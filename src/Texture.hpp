@@ -20,7 +20,7 @@ public:
     
     int width, height, nrChannels;
     
-    Texture(std::string path_, std::string type_, GLint internalformat, GLenum format, bool flip = false);
+    Texture(std::string path_, std::string type_, GLint internalformat, bool flip = false);
     
     void bind(GLenum unit);
 };

@@ -32,50 +32,57 @@ int main()
         return -1;
     }
     
-    Shader* uberShader = program.resourcesManager.loadShader("./Shaders/vertexShader.glsl", "./Shaders/BlinnPhongFragment.glsl");
+    Shader* uberShader = program.resourcesManager.loadShader("./shaders/vertexShader.glsl", "./shaders/BlinnPhongFragment.glsl");
     
-    Texture* containerDiffuse = program.resourcesManager.loadTexture("texture_diffuse", "Assets/container2.png", GL_SRGB_ALPHA, GL_RGBA);
-    Texture* containerSpecularMap = program.resourcesManager.loadTexture("texture_specular", "Assets/container2_specular.png", GL_RGB, GL_RGBA);
-    
-    Texture* brickwallDiffuse = program.resourcesManager.loadTexture("texture_diffuse", "Assets/brickwall.jpg", GL_SRGB, GL_RGB);
-    Texture* brickwallNormal = program.resourcesManager.loadTexture("texture_normal", "Assets/brickwall_normal.jpg", GL_RGB, GL_RGB);
-    
+//    Texture* containerDiffuse = program.resourcesManager.loadTexture("texture_diffuse", "Assets/container2.png", GL_SRGB_ALPHA);
+//    Texture* containerSpecularMap = program.resourcesManager.loadTexture("texture_specular", "Assets/container2_specular.png", GL_RGB);
+//    
+    Texture* brickwallDiffuse = program.resourcesManager.loadTexture("texture_diffuse", "./assets/brickwall.jpg", GL_SRGB);
+    Texture* brickwallNormal = program.resourcesManager.loadTexture("texture_normal", "./assets/brickwall_normal.jpg", GL_RGB);
+//
     CubeMesh* cubeMesh = new CubeMesh();
     program.resourcesManager.loadMesh(cubeMesh);
+//    
     
-    
-    std::vector<Texture*> containerMaterialTextures = {containerDiffuse, containerSpecularMap};
-    Material* containerMaterial = program.resourcesManager.loadMaterial("containerMaterial", 16, containerMaterialTextures);
+//    std::vector<Texture*> containerMaterialTextures = {containerDiffuse, containerSpecularMap};
+//    Material* containerMaterial = program.resourcesManager.loadMaterial("containerMaterial", 16, containerMaterialTextures);
     
     std::vector<Texture*> brickWallTextures = {brickwallDiffuse, brickwallNormal};
-    std::vector<Texture*> brickWallWithoutNormalTextures = {brickwallDiffuse};
+//    std::vector<Texture*> brickWallWithoutNormalTextures = {brickwallDiffuse};
     Material* brickwallMaterial = program.resourcesManager.loadMaterial("brickwallMaterial", 64, brickWallTextures);
-    Material* brickwallWithoutNormalsMaterial = program.resourcesManager.loadMaterial("brickwallWithoutNormalMaterial", 64, brickWallWithoutNormalTextures);
+//    Material* brickwallWithoutNormalsMaterial = program.resourcesManager.loadMaterial("brickwallWithoutNormalMaterial", 64, brickWallWithoutNormalTextures);
+    
+    Model* model = program.resourcesManager.loadModel("./assets/geralt/scene.gltf", "Geralt", false);
+    model->shader = uberShader;
+    model->position = {0.0f, -0.6f, 0.0f};
+    model->rotate({-90.0f,0.0f,0.0f});
+    //model->scale = {0.05f, 0.05f, 0.05f};
     
     program.renderer.initialize(program.resourcesManager.meshes);
     
-    Model box = Model(cubeMesh, brickwallMaterial);
-    box.shader = uberShader;
+//    Model box = Model(cubeMesh, brickwallMaterial);
+//    box.shader = uberShader;
 
-    Model container = Model(cubeMesh, brickwallWithoutNormalsMaterial);
-    container.shader = uberShader;
+//    Model container = Model(cubeMesh, brickwallWithoutNormalsMaterial);
+//    container.shader = uberShader;
     
     Model floor = Model(cubeMesh, brickwallMaterial);
     floor.shader = uberShader;
     
-    box.position = glm::vec3(2.0f, 0.0f, 0.0f);
+//    box.position = glm::vec3(2.0f, 0.0f, 0.0f);
     floor.position = glm::vec3(0.0, -1.0f, 0.0f);
-    container.position = glm::vec3(-2.0f, 0.0f, 0.0f);
+//    container.position = glm::vec3(-2.0f, 0.0f, 0.0f);
     
     floor.scale = glm::vec3(10.0f, 0.1f, 10.0f);
     
     Node scene = Node();
-    scene.addChild(&box);
+//    scene.addChild(&box);
     scene.addChild(&floor);
-    scene.addChild(&container);
+    scene.addChild(model);
+//    scene.addChild(&container);
     //scene.addChild(&container);
     
-    DirectionalLight light = DirectionalLight(glm::vec3(1.0f,1.0f,1.0f), glm::normalize(glm::vec3(1.0f, -2.0f, 0.0f)), 0.2f, 0.5f);
+    DirectionalLight light = DirectionalLight(glm::vec3(1.0f,1.0f,1.0f), glm::normalize(glm::vec3(1.0f, -2.0f, 0.0f)), 1.0f, 0.5f);
     
     //scene.addChild(&light);
     
@@ -102,9 +109,11 @@ int main()
         
         //box.position.y = sin(time)/4 + 1;
         
+        model->rotate({0.0f, 30.0f*delta, 0.0f});
         
-          pointLight.info.pos.x = sin(time)*3;
-          pointLight.info.pos.z = cos(time)*3;
+        
+        pointLight.info.pos.x = sin(time)*3;
+        pointLight.info.pos.z = cos(time)*3;
         
         pointLight2.info.pos.x = sin(time*2+1)*3;
         pointLight2.info.pos.y = cos(time*2+1)*3;
@@ -118,5 +127,6 @@ int main()
         program.endRenderLoop();
     }
     glfwTerminate();
+    delete model;
     return 0;
 }

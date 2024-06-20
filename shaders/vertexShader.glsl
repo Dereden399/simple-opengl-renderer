@@ -21,6 +21,9 @@ void main()
     FragPos = vec3(model*vec4(aPos,1.0));
     Normal = normalize((normalsModel*vec4(aNorm, 0.0)).xyz);
     vec3 T = normalize(vec3(normalsModel * vec4(aTangent,   0.0)));
-    vec3 B = normalize(vec3(normalsModel * vec4(aBitangent, 0.0)));
+    // re-orthogonalize T with respect to N
+    T = normalize(T - dot(T, Normal) * Normal);
+    // then retrieve perpendicular vector B with the cross product of T and N
+    vec3 B = cross(Normal, T);
     TBN = mat3(T, B, Normal);
 }

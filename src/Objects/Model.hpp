@@ -18,11 +18,11 @@
 #include "../Shader.hpp"
 
 class Model : public Node {
+public:
     struct MeshMaterialPair {
         Mesh* mesh;
         Material* material;
     };
-public:
     Shader* shader;
     std::vector<MeshMaterialPair> meshes;
     
