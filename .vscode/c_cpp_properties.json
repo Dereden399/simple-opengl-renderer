@@ -3,7 +3,10 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/opt/homebrew/Cellar/glfw/3.4/include",
+                "/opt/homebrew/Cellar/glm/1.0.1/include",
+                "/opt/homebrew/Cellar/assimp/5.4.1/include"
             ],
             "defines": [],
             "macFrameworkPath": [

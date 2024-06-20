@@ -11,62 +11,73 @@
 #include <glm/glm.hpp>
 
 struct Vertex {
-    glm::vec3 pos;
-    glm::vec3 norm;
-    glm::vec2 text;
-    glm::vec3 tangent = glm::vec3(0.0f);
-    glm::vec3 bitangent = glm::vec3(0.0f);
-    
-    Vertex(glm::vec3 pos_ = glm::vec3(0.0f), glm::vec3 norm_ = glm::vec3(0.0f), glm::vec2 text_ = glm::vec2(0.0f), glm::vec3 tangent_ = glm::vec3(0.0f), glm::vec3 bitangent_ = glm::vec3(0.0f)): pos(pos_), norm(norm_), text(text_), tangent(tangent_), bitangent(bitangent_) {};
-    Vertex(glm::vec3 pos_, glm::vec2 text_ = glm::vec2(0.0f), glm::vec3 norm_ = glm::vec3(0.0f)): pos(pos_), norm(norm_), text(text_) {};
+  glm::vec3 pos;
+  glm::vec3 norm;
+  glm::vec2 text;
+  glm::vec3 tangent = glm::vec3(0.0f);
+  glm::vec3 bitangent = glm::vec3(0.0f);
+
+  Vertex(glm::vec3 pos_ = glm::vec3(0.0f), glm::vec3 norm_ = glm::vec3(0.0f),
+         glm::vec2 text_ = glm::vec2(0.0f),
+         glm::vec3 tangent_ = glm::vec3(0.0f),
+         glm::vec3 bitangent_ = glm::vec3(0.0f))
+      : pos(pos_),
+        norm(norm_),
+        text(text_),
+        tangent(tangent_),
+        bitangent(bitangent_){};
+  Vertex(glm::vec3 pos_, glm::vec2 text_ = glm::vec2(0.0f),
+         glm::vec3 norm_ = glm::vec3(0.0f))
+      : pos(pos_), norm(norm_), text(text_){};
 };
 
 class Movable {
-public:
-    glm::vec3 position;
-    Movable() : position(glm::vec3(0.0f)) {};
-    Movable(glm::vec3 pos_): position(pos_) {};
-    
-    void move(glm::vec3 dir) {
-        position += dir;
-    };
+ public:
+  glm::vec3 position;
+  Movable() : position(glm::vec3(0.0f)){};
+  Movable(glm::vec3 pos_) : position(pos_){};
+
+  void move(glm::vec3 dir) { position += dir; };
 };
 
 class Rotatable {
-protected:
-    glm::vec3 _rotation;
-    glm::vec3 _forward;
-    glm::vec3 _up;
-    glm::vec3 _right;
-    
-    void updateBasis();
-    glm::mat3 getRotationMatrix3x3();
-public:
-    Rotatable() : _rotation(glm::vec3(0.0f)) {updateBasis();};
-    Rotatable(glm::vec3 rot_) : _rotation(rot_) {updateBasis();};
-    glm::mat4 getRotationMatrix() {return getRotationMatrix(_rotation);};
-    glm::mat4 getRotationMatrix(glm::vec3 angles);
-    
-    glm::vec3 getBasisForward() const {return _forward;};
-    glm::vec3 getBasisUp() const {return _up;};
-    glm::vec3 getBasisRight() const {return _right;};
-    
-    void rotate(glm::vec3 angles);
-    void setRotation(glm::vec3 angles);
-    void faceTo(const glm::vec3& dir);
+ protected:
+  glm::vec3 _rotation;
+  glm::vec3 _forward;
+  glm::vec3 _up;
+  glm::vec3 _right;
+
+  void updateBasis();
+  glm::mat3 getRotationMatrix3x3();
+
+ public:
+  Rotatable() : _rotation(glm::vec3(0.0f)) { updateBasis(); };
+  Rotatable(glm::vec3 rot_) : _rotation(rot_) { updateBasis(); };
+  glm::mat4 getRotationMatrix() { return getRotationMatrix(_rotation); };
+  glm::mat4 getRotationMatrix(glm::vec3 angles);
+
+  glm::vec3 getBasisForward() const { return _forward; };
+  glm::vec3 getBasisUp() const { return _up; };
+  glm::vec3 getBasisRight() const { return _right; };
+
+  void rotate(glm::vec3 angles);
+  void setRotation(glm::vec3 angles);
+  void faceTo(const glm::vec3& dir);
 };
 
 class Scalable {
-public:
-    glm::vec3 scale;
-    Scalable(): scale(glm::vec3(1.0f)) {};
-    Scalable(glm::vec3 scale_): scale(scale_) {};
+ public:
+  glm::vec3 scale;
+  Scalable() : scale(glm::vec3(1.0f)){};
+  Scalable(glm::vec3 scale_) : scale(scale_){};
 };
 
-class Transform: public Movable, public Rotatable, public Scalable {
-public:
-    Transform(glm::vec3 pos_ = glm::vec3(0.0f), glm::vec3 rot_ = glm::vec3(0.0f), glm::vec3 scale_ = glm::vec3(1.0f)): Movable(pos_), Rotatable(rot_), Scalable(scale_) {};
-    glm::mat4 getModelMatrix();
+class Transform : public Movable, public Rotatable, public Scalable {
+ public:
+  Transform(glm::vec3 pos_ = glm::vec3(0.0f), glm::vec3 rot_ = glm::vec3(0.0f),
+            glm::vec3 scale_ = glm::vec3(1.0f))
+      : Movable(pos_), Rotatable(rot_), Scalable(scale_){};
+  glm::mat4 getModelMatrix();
 };
 
 #endif /* Utils_hpp */

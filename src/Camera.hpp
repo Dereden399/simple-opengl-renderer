@@ -11,15 +11,16 @@
 #include "Objects/Utils.hpp"
 
 class Camera : public Movable, public Rotatable {
-public:
-    Camera(glm::vec3 pos_, glm::vec3 worldUp);
-    
-    glm::mat4 getViewMatrix();
-    glm::mat4 getProjectionMatrix();
-    glm::mat4 getProjectionViewMatrix();
-private:
-    glm::vec3 _worldUp;
-    float _fov;
+ public:
+  Camera(glm::vec3 pos_, glm::vec3 worldUp);
+
+  glm::mat4 getViewMatrix();
+  glm::mat4 getProjectionMatrix();
+  glm::mat4 getProjectionViewMatrix();
+
+ private:
+  glm::vec3 _worldUp;
+  float _fov;
 };
 
 #endif /* Camera_hpp */
