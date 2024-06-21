@@ -20,9 +20,11 @@
 #include "Objects/Node.hpp"
 
 class Renderer {
-  unsigned int _VAO, _VBO, _EBO, _LightsUBO, _hdrFBO, _colorBuffer, _rboDepth;
+  unsigned int _VAO, _VBO, _EBO, _LightsUBO, _hdrFBO, _colorBuffers[2],
+      _pingpongFBO[2], _pingpongColorbuffers[2], _rboDepth;
   bool _initialized;
   Shader* _hdrShader;
+  Shader* _blurShader;
 
   void traverseNode(Node* node,
                     std::unordered_map<Shader*, std::vector<Model*>>& models,
@@ -39,6 +41,7 @@ class Renderer {
   Renderer& operator=(Renderer&& r);
 
   void setHdrShader(Shader* sh) { _hdrShader = sh; };
+  void setBlurShader(Shader* sh) { _blurShader = sh; };
 
   void initialize(std::vector<Mesh*> meshes, Mesh* renderMesh);
   bool isInitialized() { return _initialized; };

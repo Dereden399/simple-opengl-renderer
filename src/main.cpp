@@ -32,7 +32,10 @@ int main() {
       "./shaders/vertexShader.glsl", "./shaders/BlinnPhongFragment.glsl");
   Shader* hdrShader = program.resourcesManager.loadShader(
       "./shaders/hdrVertex.glsl", "./shaders/hdrFragment.glsl");
+  Shader* blurShader = program.resourcesManager.loadShader(
+      "./shaders/hdrVertex.glsl", "./shaders/BlurFragment.glsl");
   program.renderer.setHdrShader(hdrShader);
+  program.renderer.setBlurShader(blurShader);
   Texture* brickwallDiffuse = program.resourcesManager.loadTexture(
       "texture_diffuse", "./assets/brickwall.jpg", GL_SRGB);
   Texture* brickwallNormal = program.resourcesManager.loadTexture(
@@ -42,16 +45,16 @@ int main() {
       "texture_diffuse", "./assets/container.png", GL_SRGB);
   Texture* containerSpecular = program.resourcesManager.loadTexture(
       "texture_specular", "./assets/container_specular.png", GL_RGB);
-  Texture* containerEmission = program.resourcesManager.loadTexture(
-      "texture_emission", "./assets/container_emission.png", GL_SRGB);
+  // Texture* containerEmission = program.resourcesManager.loadTexture(
+  //     "texture_emission", "./assets/container_emission.png", GL_SRGB);
 
   CubeMesh* cubeMesh = new CubeMesh();
   program.resourcesManager.loadMesh(cubeMesh);
 
   std::vector<Texture*> brickWallTextures = {brickwallDiffuse, brickwallNormal};
 
-  std::vector<Texture*> containerTextures = {
-      containerDiffuse, containerSpecular, containerEmission};
+  std::vector<Texture*> containerTextures = {containerDiffuse,
+                                             containerSpecular};
 
   Material* brickwallMaterial = program.resourcesManager.loadMaterial(
       "brickwallMaterial", 64, brickWallTextures);
@@ -67,7 +70,7 @@ int main() {
   model->rotate({-90.0f, 0.0f, 0.0f});
 
   Model* bonfire = program.resourcesManager.loadModel(
-      "./assets/bonfire/scene.gltf", "Bonfire", false, 500.0f);
+      "./assets/bonfire/scene.gltf", "Bonfire", false, 100.0f);
   bonfire->shader = uberShader;
   bonfire->position = {0.0f, 0.16f, 0.0f};
   bonfire->scale = {1.2f, 1.2f, 1.2f};
@@ -97,8 +100,8 @@ int main() {
   // scene.addChild(&light);
 
   PointLight pointLight =
-      PointLight(glm::vec3(1.0f, 0.6f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f,
-                 0.1f, 1.0f, 0.2f, 0.05f);
+      PointLight(glm::vec3(1.0f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f,
+                 0.1f, 1.0f, 0.2f, 0.5f);
 
   scene.addChild(&pointLight);
 
@@ -113,6 +116,7 @@ int main() {
     auto [time, delta] = program.startRenderLoop();
 
     model->rotate({0.0f, -30.0f * delta, 0.0f});
+    pointLight.info.quadratic = 0.5f + 0.3f * sin(time);
 
     program.endRenderLoop();
   }

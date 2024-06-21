@@ -38,7 +38,8 @@ layout (std140) uniform Lights {
     DirectionalLight dirLight; // 2432+64*50 = 5632
 }; // size 5632 + 32 = 5664
 
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
 
 in vec2 TexCoord;
 in vec3 Normal;
@@ -135,4 +136,10 @@ void main()
     }
     FragColor = result*material.blendColor;
     FragColor.rgb += texture(material.texture_emission0, TexCoord).rgb*int(material.useEmissionMap)*material.emissionStrength;
+
+    float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+    if(brightness > 1.0)
+        BrightColor = vec4(FragColor.rgb, 1.0);
+    else
+        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 }
