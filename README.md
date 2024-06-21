@@ -7,6 +7,8 @@ This repository contains source files for my toy OpenGL Renderer project
 - Own models loading
 - Point light, spotlight, directional light
 - Gamma correction
+- HDR
+- Bloom
 - Uniform Buffer Objects (UBO) for light
 - Hierarchical modelling
 
