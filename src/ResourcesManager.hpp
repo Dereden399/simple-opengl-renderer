@@ -26,6 +26,8 @@ class ResourcesManager {
   std::vector<Shader*> shaders;
   std::vector<Material*> materials;
 
+  Mesh* renderMesh;
+
   ResourcesManager();
   ~ResourcesManager();
 
@@ -40,7 +42,8 @@ class ResourcesManager {
                          glm::vec3 blendColor_ = glm::vec3(1.0f));
   Material* loadMaterial(std::string name_, float shininess_,
                          glm::vec3 blendColor_);
-  Model* loadModel(std::string path, std::string name, bool flip = false);
+  Model* loadModel(std::string path, std::string name, bool flip = false,
+                   float emissionStrength = 1.0f);
 
  private:
   Renderer* _renderer;
@@ -51,7 +54,8 @@ class ResourcesManager {
 
   void processNode(aiNode* node, const aiScene* scene,
                    std::vector<Model::MeshMaterialPair>& pairs,
-                   std::string path, std::string name, bool flip = false);
+                   std::string path, std::string name, bool flip = false,
+                   float emissionStrength = 1.0f);
 };
 
 #endif /* ResourcesManager_hpp */

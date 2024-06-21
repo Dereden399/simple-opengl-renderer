@@ -3,7 +3,7 @@
 This repository contains source files for my toy OpenGL Renderer project
 
 ## Supported features
-- Diffuse/Specular/Normal maps
+- Diffuse/Specular/Normal/Emission maps
 - Own models loading
 - Point light, spotlight, directional light
 - Gamma correction
@@ -31,3 +31,4 @@ This will generate the executable
 
 - Many thanks to [LearnOpenGL](https://learnopengl.com) for excellent free materials
 - ["Witcher 3-Geralt"](https://skfb.ly/6sIyL) by biswayan is licensed under [Creative Commons Attribution-NonCommercial](http://creativecommons.org/licenses/by-nc/4.0/).
+- ["Dark Souls - Bonfire"](https://skfb.ly/6ztTx) by UselessViking is licensed under [Creative Commons Attribution](http://creativecommons.org/licenses/by/4.0/).

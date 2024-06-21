@@ -31,6 +31,7 @@ class Program {
 
  private:
   bool _initialized = false;
+  float _exposure;
   GLFWwindow* _window;
   void _handleInput();
   void _framebuffer_size_callback(GLFWwindow* window, int width, int height);

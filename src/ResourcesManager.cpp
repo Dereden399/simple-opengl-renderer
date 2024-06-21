@@ -14,8 +14,9 @@ ResourcesManager::ResourcesManager() {
   textures = std::vector<Texture*>();
   materials = std::vector<Material*>();
   shaders = std::vector<Shader*>();
-  _meshesLastIndex = 0;
-  _meshesIndicesSize = 0;
+  renderMesh = nullptr;
+  _meshesLastIndex = 4;
+  _meshesIndicesSize = 6;
   _defaultDiffuse = nullptr;
   _defaultSpecular = nullptr;
 }
@@ -33,6 +34,7 @@ ResourcesManager::~ResourcesManager() {
   for (const auto& m : shaders) {
     delete m;
   }
+  delete renderMesh;
 }
 
 void ResourcesManager::initialize() {
@@ -40,6 +42,17 @@ void ResourcesManager::initialize() {
       loadTexture("texture_diffuse", "./assets/defaultDiffuse.png", GL_RGB);
   _defaultSpecular =
       loadTexture("texture_specular", "./assets/defaultSpecular.png", GL_RGB);
+
+  std::vector<Vertex> renderPlaneMeshVertices = {
+      {{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+      {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
+      {{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
+      {{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}}};
+  std::vector<unsigned int> renderPlaneMeshIndices = {0, 1, 2, 1, 2, 3};
+
+  Mesh* renderPlaneMesh = new Mesh(renderPlaneMeshVertices,
+                                   renderPlaneMeshIndices, "RenderPlaneMesh");
+  renderMesh = renderPlaneMesh;
 }
 
 void ResourcesManager::loadMesh(Mesh* mesh) {
@@ -115,7 +128,7 @@ Material* ResourcesManager::loadMaterial(std::string name_, float shininess_,
 }
 
 Model* ResourcesManager::loadModel(std::string path, std::string name,
-                                   bool flip) {
+                                   bool flip, float emissionStrength) {
   Assimp::Importer importer;
   const aiScene* scene = importer.ReadFile(
       path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
@@ -135,7 +148,8 @@ Model* ResourcesManager::loadModel(std::string path, std::string name,
     directory = path.substr(0, lastSlashPos + 1);
   }
 
-  processNode(scene->mRootNode, scene, pairs, directory, name, flip);
+  processNode(scene->mRootNode, scene, pairs, directory, name, flip,
+              emissionStrength);
   Model* model = new Model(pairs);
   return model;
 }
@@ -143,7 +157,7 @@ Model* ResourcesManager::loadModel(std::string path, std::string name,
 void ResourcesManager::processNode(aiNode* node, const aiScene* scene,
                                    std::vector<Model::MeshMaterialPair>& pairs,
                                    std::string path, std::string name,
-                                   bool flip) {
+                                   bool flip, float emissionStrength) {
   // process all the node's meshes (if any)
   for (unsigned int i = 0; i < node->mNumMeshes; i++) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
@@ -222,12 +236,25 @@ void ResourcesManager::processNode(aiNode* node, const aiScene* scene,
           loadTexture("texture_normal", path + str.C_Str(), GL_RGB, flip);
       textures.push_back(text);
     }
+    bool hasEmission = false;
+    for (unsigned int i = 0;
+         i < material->GetTextureCount(aiTextureType_EMISSIVE); i++) {
+      aiString str;
+      material->GetTexture(aiTextureType_EMISSIVE, i, &str);
+      Texture* text = loadTexture("texture_emission", path + str.C_Str(),
+                                  GL_SRGB_ALPHA, flip);
+      textures.push_back(text);
+      hasEmission = true;
+    }
 
     Material* myMaterial = loadMaterial(name + "Material", 64, textures);
+    myMaterial->emissionStrength = emissionStrength;
+    if (hasEmission) myMaterial->blendColor = {5.0f, 5.0f, 5.0f};
     pairs.push_back({myMesh, myMaterial});
   }
   // then do the same for each of its children
   for (unsigned int i = 0; i < node->mNumChildren; i++) {
-    processNode(node->mChildren[i], scene, pairs, path, name, flip);
+    processNode(node->mChildren[i], scene, pairs, path, name, flip,
+                emissionStrength);
   }
 }

@@ -54,6 +54,7 @@ struct Material {
     bool useEmissionMap;
     vec4 blendColor;
     float shininess;
+    float emissionStrength;
 };
 
 uniform Material material;
@@ -133,7 +134,5 @@ void main()
         result.rgb += calcSpotlight(spotLights[i], norm, viewDir, fragmentDiffuseColor, fragmentSpecularColor);
     }
     FragColor = result*material.blendColor;
-    FragColor.rgb += texture(material.texture_emission0, TexCoord).rgb*int(material.useEmissionMap);
-    float gamma = 2.2;
-    FragColor.rgb = pow(FragColor.rgb, vec3(1.0/gamma));;
+    FragColor.rgb += texture(material.texture_emission0, TexCoord).rgb*int(material.useEmissionMap)*material.emissionStrength;
 }

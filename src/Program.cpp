@@ -17,12 +17,14 @@ Program::Program() {
   resourcesManager = ResourcesManager();
   resourcesManager.setRenderer(&renderer);
   mainNode = nullptr;
+  _exposure = 1.0f;
   _lastFrame = 0.0f;
 };
 
 void Program::_framebuffer_size_callback(GLFWwindow* window, int width,
                                          int height) {
   glViewport(0, 0, width, height);
+  std::cout << "Changed viewport size: " << width << "x" << height << std::endl;
   if (selectedCamera != nullptr) {
     selectedCamera->setAspectRatio((float)width / height);
   }
@@ -34,7 +36,7 @@ int Program::initialise() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-  _window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+  _window = glfwCreateWindow(800, 600, "SimpleOpenGLRenderer", NULL, NULL);
   if (_window == NULL) {
     std::cout << "Failed to create GLFW window" << std::endl;
     glfwTerminate();
@@ -79,6 +81,7 @@ std::pair<float, float> Program::startRenderLoop() {
 
 void Program::endRenderLoop() {
   renderer.drawNode(mainNode, selectedCamera);
+  renderer.applyHdr(_exposure);
   glfwSwapBuffers(_window);
   glfwPollEvents();
 }
@@ -119,6 +122,11 @@ void Program::_handleInput() {
     rot.x -= 1;
   else if (glfwGetKey(_window, GLFW_KEY_DOWN) == GLFW_PRESS)
     rot.x += 1;
+
+  if (glfwGetKey(_window, GLFW_KEY_EQUAL) == GLFW_PRESS)
+    _exposure += 0.1f;
+  else if (glfwGetKey(_window, GLFW_KEY_MINUS) == GLFW_PRESS)
+    _exposure -= 0.1f;
 
   if (mov != glm::vec3(0.0f))
     selectedCamera->move(glm::normalize(mov) * _deltaTime * 3.0f);

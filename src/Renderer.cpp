@@ -10,7 +10,10 @@
 #include "Renderer.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
-Renderer::Renderer() { _initialized = false; };
+Renderer::Renderer() {
+  _initialized = false;
+  _hdrShader = nullptr;
+};
 
 Renderer::~Renderer() {
   if (_initialized) {
@@ -18,14 +21,22 @@ Renderer::~Renderer() {
     glDeleteBuffers(1, &_VBO);
     glDeleteBuffers(1, &_EBO);
     glDeleteBuffers(1, &_LightsUBO);
+    glDeleteFramebuffers(1, &_hdrFBO);
+    glDeleteRenderbuffers(1, &_rboDepth);
   }
 };
 
-void Renderer::initialize(std::vector<Mesh*> meshes) {
+void Renderer::initialize(std::vector<Mesh*> meshes, Mesh* renderMesh) {
   if (_initialized) return;
 
   std::vector<Vertex> finalVertices;
   std::vector<unsigned int> finalIndices;
+
+  finalVertices.insert(finalVertices.end(), renderMesh->vertices.begin(),
+                       renderMesh->vertices.end());
+  finalIndices.insert(finalIndices.end(), renderMesh->localIndices.begin(),
+                      renderMesh->localIndices.end());
+
   for (const auto& mesh : meshes) {
     finalVertices.insert(finalVertices.end(), mesh->vertices.begin(),
                          mesh->vertices.end());
@@ -38,6 +49,18 @@ void Renderer::initialize(std::vector<Mesh*> meshes) {
   glGenBuffers(1, &_VBO);
   glGenBuffers(1, &_EBO);
   glGenBuffers(1, &_LightsUBO);
+  glGenFramebuffers(1, &_hdrFBO);
+
+  glGenTextures(1, &_colorBuffer);
+  glBindTexture(GL_TEXTURE_2D, _colorBuffer);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, 800 * 2, 600 * 2, 0, GL_RGBA,
+               GL_FLOAT, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  glGenRenderbuffers(1, &_rboDepth);
+  glBindRenderbuffer(GL_RENDERBUFFER, _rboDepth);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 800 * 2, 600 * 2);
 
   glBindVertexArray(_VAO);
   glBindBuffer(GL_ARRAY_BUFFER, _VBO);
@@ -71,6 +94,16 @@ void Renderer::initialize(std::vector<Mesh*> meshes) {
                         (void*)offsetof(Vertex, bitangent));
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
+
+  glBindFramebuffer(GL_FRAMEBUFFER, _hdrFBO);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                         _colorBuffer, 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                            GL_RENDERBUFFER, _rboDepth);
+  // glEnable(GL_DEPTH_TEST);
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    std::cout << "Framebuffer not complete!" << std::endl;
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   _initialized = true;
 };
@@ -200,9 +233,12 @@ void Renderer::drawNode(Node* node, Camera* camera) {
   traverseNode(node, models, lights);
   glBindVertexArray(_VAO);
   setLightsUBO(lights, camera);
+  glBindFramebuffer(GL_FRAMEBUFFER, _hdrFBO);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   for (auto& [key, value] : models) {
     drawModels(key, value, camera);
   }
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 };
 
 void Renderer::drawModels(Shader* shader, std::vector<Model*>& models,
@@ -226,6 +262,8 @@ void Renderer::drawModels(Shader* shader, std::vector<Model*>& models,
       auto& mesh = pair.mesh;
 
       shader->setUniform("material.shininess", {material->shininess});
+      shader->setUniform("material.emissionStrength",
+                         {material->emissionStrength});
       int diffNum = 0;
       int specNum = 0;
       int normNum = 0;
@@ -259,3 +297,13 @@ void Renderer::drawModels(Shader* shader, std::vector<Model*>& models,
     }
   }
 };
+
+void Renderer::applyHdr(float exposure) {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  _hdrShader->use();
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, _colorBuffer);
+  _hdrShader->setUniform("hdrBuffer", {0});
+  _hdrShader->setUniform("exposure", {exposure});
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+}
