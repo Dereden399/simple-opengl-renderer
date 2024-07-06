@@ -1,6 +1,6 @@
 # Simple OpenGL Renderer
 
-This repository contains source files for my toy OpenGL Renderer project
+This repository contains source files for my toy OpenGL Renderer project. Check my [Metal/Swift](https://github.com/Dereden399/simple-metal-renderer) version too
 
 ## Supported features
 - Diffuse/Specular/Normal/Emission maps
